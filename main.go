@@ -2,9 +2,9 @@ package main
 
 import (
   "fmt"
-  "internal/eventhub"
+  //"internal/eventhub"
   "internal/forwarder"
-  "internal/webhook"
+  //"internal/webhook"
 )
 
 func main() {
@@ -15,14 +15,16 @@ func main() {
   
   fmt.Println("Testing")
 
-  eventhub.Foo()
-  eventhub.Bar()
+  //eventhub.Foo()
+  //eventhub.Bar()
 
-  webhook.WebP()
-  webhook.Web()
+  //webhook.WebP()
+  //webhook.Web()
 
-  forwarder.Bar()
-  forwarder.Foo()
+  //forwarder.Bar()
+  //forwarder.Foo()
+
+  forwarder.InitConfig()
 
   fmt.Println("Program end")
 }
