@@ -24,7 +24,7 @@ func main() {
   //forwarder.Bar()
   //forwarder.Foo()
 
-  forwarder.InitConfig()
+  fmt.Printf(forwarder.GetEventHubConnection())
 
   fmt.Println("Program end")
 }
