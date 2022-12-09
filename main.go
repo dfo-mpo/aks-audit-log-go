@@ -5,6 +5,8 @@ import (
   //"internal/eventhub"
   "internal/forwarder"
   //"internal/webhook"
+
+  "github.com/prometheus/client_golang/prometheus"
 )
 
 func main() {
@@ -25,6 +27,9 @@ func main() {
   //forwarder.Foo()
 
   fmt.Printf(forwarder.GetEventHubConnection())
+
+  reg := prometheus.NewRegistry()
+  metrics := NewMetrics(reg)
 
   fmt.Println("Program end")
 }
