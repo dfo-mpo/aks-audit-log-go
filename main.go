@@ -13,7 +13,7 @@ func main() {
   
   fmt.Println("Testing")
 
-  forwarder.InitServer()
+  forwarder.StartServer()
 
   fmt.Println("Program end")
 }

@@ -7,48 +7,49 @@ import (
   "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-type statistics struct {
-  sentEvents        prometheus.Counter
-  errors            prometheus.Counter
-  successes         prometheus.Counter
-  retires           prometheus.Counter
+
+type Statistics struct {
+  SentEvents        prometheus.Counter
+  Errors            prometheus.Counter
+  Successes         prometheus.Counter
+  Retries           prometheus.Counter
 }
 
-func InitServer()  {
+func StartServer() {
   reg := prometheus.NewRegistry()
   statistics := newStatistics(reg)
 
-  statistics.sentEvents.Add(1)
+  statistics.SentEvents.Add(0)
 
   http.Handle("/statistics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
 
   log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func newStatistics(reg prometheus.Registerer) *statistics  {
-  metrics := &statistics {
-    sentEvents: prometheus.NewCounter(prometheus.CounterOpts {
+func newStatistics(reg prometheus.Registerer) *Statistics  {
+  metrics := &Statistics {
+    SentEvents: prometheus.NewCounter(prometheus.CounterOpts {
       Name: "falco_aks_audit_log_events",
       Help: "total number of falco events sent",
     }),
-    errors: prometheus.NewCounter(prometheus.CounterOpts {
+    Errors: prometheus.NewCounter(prometheus.CounterOpts {
       Name: "falco_aks_audit_log_events_errors",
       Help: "total number of falco events sent with error result",
     }),
-    successes: prometheus.NewCounter(prometheus.CounterOpts {
+    Successes: prometheus.NewCounter(prometheus.CounterOpts {
       Name: "falco_aks_audit_log_events_success",
       Help: "total number of falco events sent with success result",
     }),
-    retires: prometheus.NewCounter(prometheus.CounterOpts {
+    Retries: prometheus.NewCounter(prometheus.CounterOpts {
       Name: "falco_aks_audit_log_events_retry",
       Help: "total number of times falco audit events sent had to be retired",
     }),
   }
 
-  reg.MustRegister(metrics.sentEvents)
-  reg.MustRegister(metrics.errors)
-  reg.MustRegister(metrics.successes)
-  reg.MustRegister(metrics.retires)
+  reg.MustRegister(metrics.SentEvents)
+  reg.MustRegister(metrics.Errors)
+  reg.MustRegister(metrics.Successes)
+  reg.MustRegister(metrics.Retries)
 
   return metrics
 }
