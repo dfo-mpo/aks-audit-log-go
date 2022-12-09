@@ -1,7 +1,10 @@
 package forwarder
 
 import (
+  "log"
+  "net/http"
   "github.com/prometheus/client_golang/prometheus"
+  "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type statistics struct {
@@ -11,7 +14,18 @@ type statistics struct {
   retires           prometheus.Counter
 }
 
-func NewMetrics(reg prometheus.Registerer) *statistics  {
+func InitServer()  {
+  reg := prometheus.NewRegistry()
+  statistics := newStatistics(reg)
+
+  statistics.sentEvents.Add(1)
+
+  http.Handle("/statistics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
+
+  log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func newStatistics(reg prometheus.Registerer) *statistics  {
   metrics := &statistics {
     sentEvents: prometheus.NewCounter(prometheus.CounterOpts {
       Name: "falco_aks_audit_log_events",
