@@ -1,9 +1,13 @@
 package webhook
 
 import (
-  "fmt"
 )
 
-func WebP() {
-  fmt.Println("Hello from webhook Post")
+type Poster interface {
+  SendPost(falcoEventStr string, mainEventName string, eventNumber int)      bool
+  InitConfig() 
+}
+
+func InitConfig() {
+  
 }

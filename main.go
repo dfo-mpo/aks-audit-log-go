@@ -3,6 +3,7 @@ package main
 import (
   "fmt"
   "internal/forwarder"
+  "internal/webhook"
 )
 
 func main() {
@@ -13,7 +14,11 @@ func main() {
   
   fmt.Println("Testing")
 
+  var statistics *forwarder.Statistics = forwarder.Stats
+
   forwarder.StartServer()
+
+  webhook.InitConfig()
 
   fmt.Println("Program end")
 }

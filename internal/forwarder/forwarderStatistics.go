@@ -7,6 +7,15 @@ import (
   "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+var reg = prometheus.NewRegistry()
+var Stats = newStatistics(reg)
+
+type Stat interface {
+  IncreaseSent()
+  IncreaseErrors()
+  IncreaseSuccesses()
+  IncreaseRetires()
+}
 
 type Statistics struct {
   SentEvents        prometheus.Counter
@@ -16,14 +25,21 @@ type Statistics struct {
 }
 
 func StartServer() {
-  reg := prometheus.NewRegistry()
-  statistics := newStatistics(reg)
-
-  statistics.SentEvents.Add(0)
-
   http.Handle("/statistics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
-
   log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func (stat Statistics) IncreaseSent() {
+  stat.SentEvents.Add(1)
+}
+func (stat Statistics) IncreaseErrors() {
+  stat.Errors.Add(1)
+}
+func (stat Statistics) IncreaseSuccesses() {
+  stat.Successes.Add(1)
+}
+func (stat Statistics) IncreaseRetries() {
+  stat.Retries.Add(1)
 }
 
 func newStatistics(reg prometheus.Registerer) *Statistics  {
