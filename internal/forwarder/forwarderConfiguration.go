@@ -53,7 +53,7 @@ func InitConfig() *ForwarderConfiguration {
   }
 
   config.WebSinkURL = os.Getenv("WEBSINKURL")
-  if config.WebsinkURL == "" {
+  if config.WebSinkURL == "" {
     log.Fatal("WebSinkURL is not set")
   }
 
