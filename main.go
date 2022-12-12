@@ -15,13 +15,9 @@ func main() {
   
   fmt.Println("Testing")
 
-  var statistics *forwarder.Statistics = forwarder.Stats
-
   httpclient.NewHttpClientHandler()
 
-  fmt.Println("%+v", statistics)
-
-  forwarder.StartServer()
+  forwarder.InitServer()
 
   webhook.InitConfig()
 
