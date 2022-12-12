@@ -31,20 +31,30 @@ var (
   })
 )
 
-func IncreaseSent()  {
+type ForwarderStatistics struct {}
+
+func NewForwarderStatistics() *ForwarderStatistics {
+  return &ForwarderStatistics{}
+}
+
+func (f *ForwarderStatistics) IncreaseSent()  {
   sent.Inc()
 }
 
-func IncreaseErrors() {
+func (f *ForwarderStatistics) IncreaseErrors() {
   errors.Inc()
 }
 
-func IncreaseSuccesses() {
+func (f *ForwarderStatistics) IncreaseSuccesses() {
   successes.Inc()
 }
 
-func IncreaseRetries() {
+func (f *ForwarderStatistics) IncreaseRetries() {
   retries.Inc()
+}
+
+func (f *ForwarderStatistics) StartServer() {
+  go InitServer()
 }
 
 func InitServer()  {
