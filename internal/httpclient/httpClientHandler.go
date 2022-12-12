@@ -17,5 +17,5 @@ func (h *HttpClientHandler) GetAsync(url string) (*http.Response, error) {
 }
 
 func (h *HttpClientHandler) PostAsync(url string, content string) (*http.Response, error)  {
- return h.client.Post(url, "application/json", nil)
+ return h.client.Post(url, content, nil)
 }
