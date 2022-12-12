@@ -68,5 +68,23 @@ func InitConfig() *ForwarderConfiguration {
   config.PostMaxRetries = 10
   config.PostRetryIncrementalDelay = 1000
 
+  if config.VerboseLevel > 3 {
+    fmt.Println("EventHubName: {0}", config.EventHubName)
+    fmt.Println("BlobContainerName: {0}", config.BlobContainerName)
+    fmt.Println("WebSinkURL : {0}", config.WebSinkURL)
+    fmt.Println("VerboseLevel: {0}", config.VerboseLevel)
+
+    fmt.Println("EhubNamespaceConnectionString length: {0}", len(config.EhubNamespaceConnectionString))
+    fmt.Println("BlobStorageConnectionString length: {0}", len(config.BlobStorageConnectionString))
+  }
+
+  return config
 }
 
+func (c *ForwarderConfiguration) isValid() bool {
+  return (c.EhubNamespaceConnectionString != "" &&
+    c.BlobStorageConnectionString != "" &&
+    c.WebSinkURL != "" &&
+    c.EventHubName != "" &&
+    c.BlobContainerName != "")
+}
