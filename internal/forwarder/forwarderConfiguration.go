@@ -7,80 +7,64 @@ import (
   "github.com/joho/godotenv"
 )
 
-type ForwarderConfiguration interface {
-  GetEventHubConnection()       string
-  GetEventHub()                 string
-  GetBlobStorageConnection()    string
-  GetBlobStorage()              string
-  GetWebSinkURL()               string
+type ForwarderConfiguration struct {
+  EhubNamespaceConnectionString   string
+  EventHubName                    string
+  BlobStorageConnectionString     string
+  BlobContainerName               string
+  WebSinkURL                      string
+
+  VerboseLevel                    int
+
+  PostMaxRetries                  int
+  PostRetryIncrementalDelay       int
 }
 
-func GetEventHubConnection() string {
+func InitConfig() *ForwarderConfiguration {
   err := godotenv.Load()
   if err != nil {
     log.Fatal("Error loading .env file")
   }
 
-  eventHubConnection := os.Getenv("EVENTHUBCONNECTION")
-  if eventHubConnection == "" {
-    log.Fatal("EventHub Connection unknown")
+  fmt.Println("InitConfig")
+  
+  config := &ForwarderConfiguration{}
+
+  config.EhubNamespaceConnectionString = os.Getenv("EHUBNAMESPACECONNECTIONSTRING")
+  if config.EhubNamespaceConnectionString == "" {
+    log.Fatal("EhubNamespaceConnectionString is not set")
   }
 
-  return eventHubConnection
+  config.EventHubName = os.Getenv("EVENTHUBNAME")
+  if config.EventHubName == "" {
+    log.Fatal("EventHubName is not set")
+  }
+
+  config.BlobStorageConnectionString = os.Getenv("BLOBSTORAGECONNECTIONSTRING")
+  if config.BlobStorageConnectionString == "" {
+    log.Fatal("BlobStorageConnectionString is not set")
+  }
+
+  config.BlobContainerName = os.Getenv("BLOBCONTAINERNAME")
+  if config.BlobContainerName == "" {
+    log.Fatal("BlobContainerName is not set")
+  }
+
+  config.WebSinkURL = os.Getenv("WEBSINKURL")
+  if config.WebsinkURL == "" {
+    log.Fatal("WebSinkURL is not set")
+  }
+
+  verboseLevel := os.Getenv("VERBOSELEVEL")
+  if verboseLevel != "" {
+    config.VerboseLevel, err = strconv.Atoi(verboseLevel)
+    if err != nil {
+      log.Fatal("VerboseLevel is not set")
+    }
+  }
+
+  config.PostMaxRetries = 10
+  config.PostRetryIncrementalDelay = 1000
+
 }
 
-func GetEventHub() string {
-  err := godotenv.Load()
-  if err != nil {
-    log.Fatal("Error loading .env file")
-  }
-
-  eventHub := os.Getenv("EVENTHUB")
-  if eventHub == "" {
-    log.Fatal("EventHub unknown")
-  }
-
-  return eventHub
-}
-
-func GetBlobStorageConnection() string {
-  err := godotenv.Load()
-  if err != nil {
-    log.Fatal("Error loading .env file")
-  }
-
-  blobStorageConnection:= os.Getenv("BLOBSTORAGECONNECTION")
-  if blobStorageConnection == "" {
-    log.Fatal("Blob Storage Connection unknown")
-  }
-
-  return blobStorageConnection
-}
-
-func GetBlobStorage() string {
-  err := godotenv.Load()
-  if err != nil {
-    log.Fatal("Error loading .env file")
-  }
-
-  blobStorage := os.Getenv("BLOBSTORAGE")
-  if blobStorage == "" {
-    log.Fatal("Blob Storage unknown")
-  }
-
-  return blobStorage
-}
-
-func GetWebSinkURL() string {
-  err := godotenv.Load()
-  if err != nil {
-    log.Fatal("Error loading .env file")
-  }
-
-  webSinkURL := os.Getenv("WEBSINKURL")
-  if webSinkURL == "" {
-    log.Fatal("Websink URL unknown")
-  }
-
-  return webSinkURL
-}
