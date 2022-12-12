@@ -4,6 +4,11 @@ import (
   "net/http"
 )
 
+type IHttpHandler interface {
+  GetAsync(url string) (*http.Response, error)
+  PostAsync(url string, content string) (*http.Response, error)
+}
+
 type HttpClientHandler struct {
   client *http.Client
 }
