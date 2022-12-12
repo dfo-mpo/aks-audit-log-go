@@ -4,6 +4,7 @@ import (
   "fmt"
   "internal/forwarder"
   "internal/webhook"
+  "internal/httpclient"
 )
 
 func main() {
@@ -15,6 +16,10 @@ func main() {
   fmt.Println("Testing")
 
   var statistics *forwarder.Statistics = forwarder.Stats
+
+  httpclient.NewHttpClientHandler()
+
+  fmt.Println("%+v", statistics)
 
   forwarder.StartServer()
 
