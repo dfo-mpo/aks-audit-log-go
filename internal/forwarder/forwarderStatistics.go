@@ -15,19 +15,19 @@ import (
 var (
   sent = prometheus.NewCounter(prometheus.CounterOpts{
     Name: "falco_aks_audit_log_events",
-    Help: "total number of falco events sent",
+    Help: "Total number of falco events sent",
   })
   errors = prometheus.NewCounter(prometheus.CounterOpts{
     Name: "falco_aks_audit_log_events_errors",
-    Help: "total number of falco events sent with error result",
+    Help: "Total number of falco events sent with error result",
   })
   successes = prometheus.NewCounter(prometheus.CounterOpts{
     Name: "falco_aks_audit_log_events_success",
-    Help: "total number of falco events sent with success result",
+    Help: "Total number of falco events sent with success result",
   })
   retries = prometheus.NewCounter(prometheus.CounterOpts{
     Name: "falco_aks_audit_log_events_retry",
-    Help: "total number of times falco audit events sent had to be retired",
+    Help: "Total number of times falco audit events sent had to be retired",
   })
 )
 
