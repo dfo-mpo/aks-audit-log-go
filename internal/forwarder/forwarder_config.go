@@ -22,7 +22,11 @@ type ForwarderConfiguration struct {
   PostRetryIncrementalDelay       int
 }
 
-func InitConfig() *ForwarderConfiguration {
+func NewForwarderConfiguration() *ForwarderConfiguration {
+  return &ForwarderConfiguration{}
+}
+
+func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
   err := godotenv.Load()
   if err != nil {
     log.Fatal("Error loading .env file")
@@ -81,10 +85,10 @@ func InitConfig() *ForwarderConfiguration {
   return config
 }
 
-func (c *ForwarderConfiguration) isValid() bool {
-  return (c.EhubNamespaceConnectionString != "" &&
-    c.BlobStorageConnectionString != "" &&
-    c.WebSinkURL != "" &&
-    c.EventHubName != "" &&
-    c.BlobContainerName != "")
+func (f *ForwarderConfiguration) isValid() bool {
+  return (f.EhubNamespaceConnectionString != "" &&
+    f.BlobStorageConnectionString != "" &&
+    f.WebSinkURL != "" &&
+    f.EventHubName != "" &&
+    f.BlobContainerName != "")
 }
