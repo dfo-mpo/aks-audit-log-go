@@ -2,9 +2,9 @@ package main
 
 import (
   "fmt"
-  "internal/forwarder"
-  "internal/webhook"
-  "internal/httpclient"
+  "github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
+  "github.com/JuanPabloSGU/aks-audit-log-go/internal/webhook"
+  "github.com/JuanPabloSGU/aks-audit-log-go/internal/httpclient"
 )
 
 func main() {
