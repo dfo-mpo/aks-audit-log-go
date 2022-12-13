@@ -3,8 +3,6 @@ package main
 import (
   "fmt"
   "github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
-  "github.com/JuanPabloSGU/aks-audit-log-go/internal/webhook"
-  "github.com/JuanPabloSGU/aks-audit-log-go/internal/httpclient"
 )
 
 func main() {
@@ -15,11 +13,7 @@ func main() {
   
   fmt.Println("Testing")
 
-  httpclient.NewHttpClientHandler()
-
   forwarder.InitServer()
-
-  webhook.InitConfig()
 
   fmt.Println("Program end")
 }
