@@ -2,12 +2,11 @@ package eventhub
 
 import (
   "context"
-	"errors"
-	"fmt"
-	"time"
-
-	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
-	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
+  "errors"
+  "fmt"
+  "time"
+  "github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
+  "github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
   "github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
 )
 
