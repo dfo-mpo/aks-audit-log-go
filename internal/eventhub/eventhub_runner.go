@@ -37,7 +37,7 @@ func Run() {
   }
 
   dispatchPartitionClients := func() {
-    for {
+    for i := 0; i < 1; i++ {
       randomName := generate(8)
 
       if config.VerboseLevel > 1 {
@@ -70,9 +70,9 @@ func Run() {
 
 func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, randomName string) error {
   defer closePartitionResources(partitionClient)
-  for {
+  for i := 0; i < 1; i++{
     receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
-    events, err := partitionClient.ReceiveEvents(receiveCtx, 100, nil)
+    events, err := partitionClient.ReceiveEvents(receiveCtx, 1, nil)
     receiveCtxCancel()
 
     if err != nil && !errors.Is(err, context.DeadlineExceeded) {
@@ -91,6 +91,8 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
       }
     }
   }
+
+  return nil
 }
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
