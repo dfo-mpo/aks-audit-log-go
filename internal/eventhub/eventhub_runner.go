@@ -5,6 +5,8 @@ import (
   "errors"
   "fmt"
   "time"
+  "crypto/rand"
+  "unsafe"
   "github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
   "github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
   "github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
@@ -35,6 +37,12 @@ func Run() {
 
   dispatchPartitionClients := func() {
     for {
+      randomName := generate(8)
+
+      if config.VerboseLevel > 1 {
+        fmt.Printf("{%q} > Recieved event pack", randomName)
+      }
+
       partitionClient := processor.NextPartitionClient(context.TODO())
 
       if partitionClient == nil {
@@ -42,7 +50,7 @@ func Run() {
       }
 
       go func() {
-        if err := processEvents(partitionClient); err != nil {
+        if err := processEvents(partitionClient, randomName); err != nil {
           panic(err)
         }
       }()
@@ -59,7 +67,7 @@ func Run() {
   }
 }
 
-func processEvents(partitionClient *azeventhubs.ProcessorPartitionClient) error {
+func processEvents(partitionClient *azeventhubs.ProcessorPartitionClient, randomName string) error {
   defer closePartitionResources(partitionClient)
   for {
     receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
@@ -86,4 +94,17 @@ func processEvents(partitionClient *azeventhubs.ProcessorPartitionClient) error 
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
   defer partitionClient.Close(context.TODO())
+}
+
+func generate(size int) string {
+
+  alphabet := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+  b := make([]byte, size)
+  rand.Read(b)
+  for i := 0; i < size; i++ {
+    b[i] = alphabet[b[i] % byte(len(alphabet))]
+  }
+
+  return *(*string)(unsafe.Pointer(&b))
 }
