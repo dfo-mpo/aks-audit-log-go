@@ -13,9 +13,10 @@ import (
 )
 
 func Run() {
-  f := forwarder.ForwarderConfiguration{}
-
-  config := f.InitConfig()
+  forwarder := forwarder.ForwarderConfiguration{}
+  eventhub := HubEventUnpacker{}
+  config := forwarder.InitConfig()
+  eventhub.InitConfig(config)
 
   checkpointStore, err := checkpoints.NewBlobStoreFromConnectionString(config.BlobStorageConnectionString, config.BlobContainerName, nil)
   if err != nil {
@@ -50,7 +51,7 @@ func Run() {
       }
 
       go func() {
-        if err := processEvents(partitionClient, randomName); err != nil {
+        if err := processEvents(eventhub, partitionClient, randomName); err != nil {
           panic(err)
         }
       }()
@@ -67,7 +68,7 @@ func Run() {
   }
 }
 
-func processEvents(partitionClient *azeventhubs.ProcessorPartitionClient, randomName string) error {
+func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, randomName string) error {
   defer closePartitionResources(partitionClient)
   for {
     receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
@@ -81,7 +82,7 @@ func processEvents(partitionClient *azeventhubs.ProcessorPartitionClient, random
     fmt.Printf("Processing %d event(s)\n", len(events))
 
     for _, event := range events {
-      fmt.Printf("Event received with body %v\n", string(event.Body))
+      eventhub.Process(event.Body, randomName)
     }
 
     if len(events) != 0 {

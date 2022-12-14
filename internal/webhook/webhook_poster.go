@@ -13,6 +13,10 @@ type WebhookPoster struct {
   HttpClient                httpclient.IHttpHandler
 }
 
+func NewWebhookPoster() *WebhookPoster {
+  return &WebhookPoster{}
+}
+
 func (w *WebhookPoster) InitConfig() {
   if w.HttpClient == nil {
     w.HttpClient = &httpclient.HttpClientHandler{}
