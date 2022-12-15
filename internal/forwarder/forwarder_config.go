@@ -34,55 +34,56 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 
   fmt.Println("InitConfig")
   
-  config := &ForwarderConfiguration{}
 
-  config.EhubNamespaceConnectionString = os.Getenv("EHUBNAMESPACECONNECTIONSTRING")
-  if config.EhubNamespaceConnectionString == "" {
+  f.EhubNamespaceConnectionString = os.Getenv("EHUBNAMESPACECONNECTIONSTRING")
+  if f.EhubNamespaceConnectionString == "" {
     log.Fatal("EhubNamespaceConnectionString is not set")
   }
 
-  config.EventHubName = os.Getenv("EVENTHUBNAME")
-  if config.EventHubName == "" {
+  f.EventHubName = os.Getenv("EVENTHUBNAME")
+  if f.EventHubName == "" {
     log.Fatal("EventHubName is not set")
   }
 
-  config.BlobStorageConnectionString = os.Getenv("BLOBSTORAGECONNECTIONSTRING")
-  if config.BlobStorageConnectionString == "" {
+  f.BlobStorageConnectionString = os.Getenv("BLOBSTORAGECONNECTIONSTRING")
+  if f.BlobStorageConnectionString == "" {
     log.Fatal("BlobStorageConnectionString is not set")
   }
 
-  config.BlobContainerName = os.Getenv("BLOBCONTAINERNAME")
-  if config.BlobContainerName == "" {
+  f.BlobContainerName = os.Getenv("BLOBCONTAINERNAME")
+  if f.BlobContainerName == "" {
     log.Fatal("BlobContainerName is not set")
   }
 
-  config.WebSinkURL = os.Getenv("WEBSINKURL")
-  if config.WebSinkURL == "" {
+  f.WebSinkURL = os.Getenv("WEBSINKURL")
+  if f.WebSinkURL == "" {
     log.Fatal("WebSinkURL is not set")
   }
 
   verboseLevel := os.Getenv("VERBOSELEVEL")
   if verboseLevel != "" {
-    config.VerboseLevel, err = strconv.Atoi(verboseLevel)
+    f.VerboseLevel, err = strconv.Atoi(verboseLevel)
     if err != nil {
       log.Fatal("VerboseLevel is not set")
     }
   }
 
-  config.PostMaxRetries = 10
-  config.PostRetryIncrementalDelay = 1000
+  f.PostMaxRetries = 10
+  f.PostRetryIncrementalDelay = 1000
 
-  if config.VerboseLevel > 3 {
-    fmt.Println("EventHubName: {0}", config.EventHubName)
-    fmt.Println("BlobContainerName: {0}", config.BlobContainerName)
-    fmt.Println("WebSinkURL : {0}", config.WebSinkURL)
-    fmt.Println("VerboseLevel: {0}", config.VerboseLevel)
+  if f.VerboseLevel > 3 {
+    fmt.Println("EventHubName: {0}", f.EventHubName)
+    fmt.Println("BlobContainerName: {0}", f.BlobContainerName)
+    fmt.Println("WebSinkURL : {0}", f.WebSinkURL)
+    fmt.Println("VerboseLevel: {0}", f.VerboseLevel)
 
-    fmt.Println("EhubNamespaceConnectionString length: {0}", len(config.EhubNamespaceConnectionString))
-    fmt.Println("BlobStorageConnectionString length: {0}", len(config.BlobStorageConnectionString))
+    fmt.Println("EhubNamespaceConnectionString length: {0}", len(f.EhubNamespaceConnectionString))
+    fmt.Println("BlobStorageConnectionString length: {0}", len(f.BlobStorageConnectionString))
   }
 
-  return config
+  fmt.Println("inside init config pointer print please :)")
+  fmt.Println(f)
+  return f
 }
 
 func (f *ForwarderConfiguration) isValid() bool {

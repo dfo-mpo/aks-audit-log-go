@@ -1,26 +1,30 @@
 package eventhub
 
 import (
-  "fmt"
   "encoding/json"
+  "fmt"
+  "log"
+
   "github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
   "github.com/JuanPabloSGU/aks-audit-log-go/internal/webhook"
 )
 
 type HubEventUnpacker struct {
-  ForwarderConfiguration  *forwarder.ForwarderConfiguration
-  WebhookPoster           webhook.WebhookPoster 
+  forwarderConfiguration *forwarder.ForwarderConfiguration
+  webhookPoster          webhook.WebhookPoster
 }
 
-func (h HubEventUnpacker) InitConfig(f *forwarder.ForwarderConfiguration) {
-  h.WebhookPoster = webhook.WebhookPoster{ForwarderConfiguration: f,}
-  h.WebhookPoster.InitConfig()
+func (h *HubEventUnpacker) InitConfig(f *forwarder.ForwarderConfiguration) {
+  h.forwarderConfiguration = f
+  h.webhookPoster = webhook.WebhookPoster{ForwarderConfiguration: h.forwarderConfiguration}
+  h.webhookPoster.InitConfig()
 }
 
 func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (bool, error) {
   var event map[string]interface{}
   err := json.Unmarshal(eventJObj, &event)
   if err != nil {
+    log.Fatalln(err)
     return false, err
   }
 
@@ -32,12 +36,15 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (bool,
     record := record.(map[string]interface{})
     auditEventStr := record["properties"].(map[string]interface{})["log"].(string)
 
-    if h.ForwarderConfiguration.VerboseLevel > 2 {
+    fmt.Println("before verboseLevel")
+    fmt.Println(h.forwarderConfiguration)
+    if h.forwarderConfiguration.VerboseLevel > 2 {
       h.ConsoleWriteEventSummary(auditEventStr, mainEventName, i)
     }
 
-    result, err := h.WebhookPoster.SendPost(auditEventStr, mainEventName, i)
+    result, err := h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
     if err != nil {
+      log.Fatalln(err)
       return false, err
     }
 
@@ -53,13 +60,14 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (bool,
 
 func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEventName string, eventNumber int) {
   var auditEvent map[string]interface{}
-  err := json.Unmarshal([]byte(auditEventStr), &auditEvent)
+  err := json.Unmarshal(([]byte(auditEventStr)), &auditEvent)
 
   if err != nil {
+    log.Fatalln(err)
     fmt.Println(err)
   }
 
-  fmt.Printf("%s %d > READ audit event: %s %s %s %s", 
+  fmt.Printf("%s %d > READ audit event: %s %s %s %s",
     mainEventName, eventNumber,
     auditEvent["user"].(map[string]interface{})["username"].(string),
     auditEvent["verb"].(string),
