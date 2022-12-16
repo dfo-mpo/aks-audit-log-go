@@ -74,8 +74,8 @@ func InitServer()  {
   
   /// Start Server and log errors
   go func() {
-    log.Println("Starting Server on PORT : 8080")
-    if err := http.ListenAndServe(":8080", mux); err != nil {
+    log.Println("Starting Server on PORT : 9000")
+    if err := http.ListenAndServe(":9000", mux); err != nil {
       log.Fatal(err)
     }
   }()

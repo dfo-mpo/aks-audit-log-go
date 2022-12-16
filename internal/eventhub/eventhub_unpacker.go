@@ -37,7 +37,7 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (bool,
     auditEventStr := record["properties"].(map[string]interface{})["log"].(string)
 
     if h.forwarderConfiguration.VerboseLevel > 2 {
-      h.ConsoleWriteEventSummary(auditEventStr, mainEventName, i)
+      // h.ConsoleWriteEventSummary(auditEventStr, mainEventName, i)
     }
 
     result, err := h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
