@@ -1,9 +1,9 @@
 package main
 
 import (
-  "fmt"
-  // "github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
-  "github.com/JuanPabloSGU/aks-audit-log-go/internal/eventhub"
+	"fmt"
+	"github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
+	"github.com/JuanPabloSGU/aks-audit-log-go/internal/eventhub"
 )
 
 func main() {
@@ -11,6 +11,8 @@ func main() {
   fmt.Println("Starting Prometheus statistics")
 
   fmt.Println("Starting Server")
+
+  forwarder.InitServer() 
   
   fmt.Println("Testing")
 

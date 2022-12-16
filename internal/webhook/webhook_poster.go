@@ -1,30 +1,31 @@
 package webhook
 
 import (
-  "fmt"
-  "net/http"
-  "time"
-  "github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
-  "github.com/JuanPabloSGU/aks-audit-log-go/internal/httpclient"
+	"fmt"
+	"log"
+	"net/http"
+	"time"
+
+	"github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
+	"github.com/JuanPabloSGU/aks-audit-log-go/internal/httpclient"
 )
 
 type WebhookPoster struct {
-  ForwarderConfiguration    *forwarder.ForwarderConfiguration
-  HttpClient                httpclient.IHttpHandler
+  forwarderConfiguration    *forwarder.ForwarderConfiguration
+  httpClient                *httpclient.HttpClientHandler
 }
 
 func NewWebhookPoster() *WebhookPoster {
   return &WebhookPoster{}
 }
 
-func (w *WebhookPoster) InitConfig() {
-  if w.HttpClient == nil {
-    w.HttpClient = &httpclient.HttpClientHandler{}
-  }
+func (w *WebhookPoster) InitConfig(f *forwarder.ForwarderConfiguration) {
+  w.forwarderConfiguration = f
+  w.httpClient = httpclient.NewHttpClientHandler()
 }
 
-func (w *WebhookPoster) PostSyncNoException(url string, content string) (*http.Response, error) {
-  response, err := w.HttpClient.PostAsync(url, content)
+func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body string) (*http.Response, error) {
+  response, err := w.httpClient.PostAsync(url, contentType, body)
   if err != nil {
     return nil, err
   }
@@ -34,30 +35,35 @@ func (w *WebhookPoster) PostSyncNoException(url string, content string) (*http.R
 
 func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eventNumber int) (bool, error) {
   retries := 1
-  delay := w.ForwarderConfiguration.PostRetryIncrementalDelay
+  delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 
-  if w.ForwarderConfiguration.VerboseLevel > 3 {
-    fmt.Printf("%s %d > POST event to : %s", mainEventName, eventNumber, w.ForwarderConfiguration.WebSinkURL)
+  if w.forwarderConfiguration.VerboseLevel > 3 {
+    fmt.Printf("%s %d > POST event to : %s", mainEventName, eventNumber, w.forwarderConfiguration.WebSinkURL)
   }
 
   f := forwarder.ForwarderStatistics{}
   f.IncreaseSent()
 
-  response, err := w.PostSyncNoException(w.ForwarderConfiguration.WebSinkURL, auditEventStr)
+  response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
+
+  if err != nil {
+    log.Fatalln(err)
+  }
 
   status := response.StatusCode == 200 // OK
 
-  for !status && retries <= w.ForwarderConfiguration.PostMaxRetries {
+
+  for !status && retries <= w.forwarderConfiguration.PostMaxRetries {
     fmt.Printf("%s %d > **Error sending POST, retry %d, result: [%d] %s", mainEventName, eventNumber, retries, response.StatusCode, response.Body)
     
     retries++
 
     time.Sleep(time.Duration(delay) * time.Millisecond)
-    delay += w.ForwarderConfiguration.PostRetryIncrementalDelay
+    delay += w.forwarderConfiguration.PostRetryIncrementalDelay
 
     f.IncreaseRetries()
 
-    response, err := w.PostSyncNoException(w.ForwarderConfiguration.WebSinkURL, auditEventStr)
+    response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
 
     if err != nil {
       fmt.Printf("%s %d > **Error sending POST, retry %d, result: [%d] %s", mainEventName, eventNumber, retries, response.StatusCode, response.Body)
@@ -68,7 +74,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 
   if status {
     f.IncreaseSuccesses()
-    if w.ForwarderConfiguration.VerboseLevel > 3 {
+    if w.forwarderConfiguration.VerboseLevel > 3 {
       fmt.Printf("%s %d > Post response OK", mainEventName, eventNumber)
     }
 

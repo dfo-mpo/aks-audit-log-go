@@ -16,8 +16,8 @@ type HubEventUnpacker struct {
 
 func (h *HubEventUnpacker) InitConfig(f *forwarder.ForwarderConfiguration) {
   h.forwarderConfiguration = f
-  h.webhookPoster = webhook.WebhookPoster{ForwarderConfiguration: h.forwarderConfiguration}
-  h.webhookPoster.InitConfig()
+  h.webhookPoster = webhook.WebhookPoster{}
+  h.webhookPoster.InitConfig(f)
 }
 
 func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (bool, error) {
