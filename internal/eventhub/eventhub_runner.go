@@ -1,15 +1,17 @@
 package eventhub
 
 import (
-  "context"
-  "errors"
-  "fmt"
-  "time"
-  "crypto/rand"
-  "unsafe"
-  "github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
-  "github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
-  "github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
+	"context"
+	"crypto/rand"
+	"errors"
+	"fmt"
+	"log"
+	"time"
+	"unsafe"
+
+	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
+	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
+	"github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
 )
 
 func Run() {
@@ -37,7 +39,6 @@ func Run() {
   }
 
   dispatchPartitionClients := func() {
-    for i := 0; i < 1; i++ {
       randomName := generate(8)
 
       if config.VerboseLevel > 1 {
@@ -47,7 +48,7 @@ func Run() {
       partitionClient := processor.NextPartitionClient(context.TODO())
 
       if partitionClient == nil {
-        break
+        log.Fatalln("Next partitionClient failed to be created")
       }
 
       go func() {
@@ -55,7 +56,6 @@ func Run() {
           panic(err)
         }
       }()
-    }
   }
 
   go dispatchPartitionClients()
@@ -70,29 +70,27 @@ func Run() {
 
 func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, randomName string) error {
   defer closePartitionResources(partitionClient)
-  for i := 0; i < 1; i++{
-    receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
-    events, err := partitionClient.ReceiveEvents(receiveCtx, 1, nil)
-    receiveCtxCancel()
+  receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
+  events, err := partitionClient.ReceiveEvents(receiveCtx, 1, nil)
+  receiveCtxCancel()
 
-    if err != nil && !errors.Is(err, context.DeadlineExceeded) {
+  if err != nil && !errors.Is(err, context.DeadlineExceeded) {
+    return err
+  }
+
+  fmt.Printf("Processing %d event(s)\n", len(events))
+
+  for _, event := range events {
+    eventhub.Process(event.Body, randomName)
+  }
+
+  if len(events) != 0 {
+    if err := partitionClient.UpdateCheckpoint(context.TODO(), events[len(events)-1]); err != nil {
       return err
-    }
-
-    fmt.Printf("Processing %d event(s)\n", len(events))
-
-    for _, event := range events {
-      eventhub.Process(event.Body, randomName)
-    }
-
-    if len(events) != 0 {
-      if err := partitionClient.UpdateCheckpoint(context.TODO(), events[len(events)-1]); err != nil {
-        return err
-      }
     }
   }
 
-  return nil
+  return err
 }
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
