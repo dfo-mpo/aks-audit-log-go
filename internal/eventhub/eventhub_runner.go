@@ -39,23 +39,23 @@ func Run() {
   }
 
   dispatchPartitionClients := func() {
-      randomName := generate(8)
+    randomName := generate(8)
 
-      if config.VerboseLevel > 1 {
-        fmt.Printf("{%q} > Recieved event pack", randomName)
+    if config.VerboseLevel > 1 {
+      fmt.Printf("{%q} > Recieved event pack", randomName)
+    }
+
+    partitionClient := processor.NextPartitionClient(context.TODO())
+
+    if partitionClient == nil {
+      log.Fatalln("Next partitionClient failed to be created")
+    }
+
+    go func() {
+      if err := processEvents(eventhub, partitionClient, randomName); err != nil {
+        panic(err)
       }
-
-      partitionClient := processor.NextPartitionClient(context.TODO())
-
-      if partitionClient == nil {
-        log.Fatalln("Next partitionClient failed to be created")
-      }
-
-      go func() {
-        if err := processEvents(eventhub, partitionClient, randomName); err != nil {
-          panic(err)
-        }
-      }()
+    }()
   }
 
   go dispatchPartitionClients()
@@ -98,7 +98,6 @@ func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClie
 }
 
 func generate(size int) string {
-
   alphabet := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
   b := make([]byte, size)
