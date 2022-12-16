@@ -67,7 +67,7 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
     }
   }
 
-  f.PostMaxRetries = 10
+  f.PostMaxRetries = 5
   f.PostRetryIncrementalDelay = 1000
 
   if f.VerboseLevel > 3 {

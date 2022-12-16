@@ -52,7 +52,6 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 
   status := response.StatusCode == 200 // OK
 
-
   for !status && retries <= w.forwarderConfiguration.PostMaxRetries {
     fmt.Printf("%s %d > **Error sending POST, retry %d, result: [%d] %s", mainEventName, eventNumber, retries, response.StatusCode, response.Body)
     
