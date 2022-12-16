@@ -33,7 +33,6 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
   }
 
   fmt.Println("InitConfig")
-  
 
   f.EhubNamespaceConnectionString = os.Getenv("EHUBNAMESPACECONNECTIONSTRING")
   if f.EhubNamespaceConnectionString == "" {
@@ -81,8 +80,6 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
     fmt.Println("BlobStorageConnectionString length: {0}", len(f.BlobStorageConnectionString))
   }
 
-  fmt.Println("inside init config pointer print please :)")
-  fmt.Println(f)
   return f
 }
 
