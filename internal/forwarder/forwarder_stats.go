@@ -3,9 +3,6 @@ package forwarder
 import (
   "log"
   "net/http"
-  "os"
-  "os/signal"
-  "syscall"
   "time"
 
   "github.com/prometheus/client_golang/prometheus"
@@ -33,10 +30,6 @@ var (
 
 type ForwarderStatistics struct {}
 
-func NewForwarderStatistics() *ForwarderStatistics {
-  return &ForwarderStatistics{}
-}
-
 func (f *ForwarderStatistics) IncreaseSent()  {
   sent.Inc()
 }
@@ -53,10 +46,6 @@ func (f *ForwarderStatistics) IncreaseRetries() {
   retries.Inc()
 }
 
-func (f *ForwarderStatistics) StartServer() {
-  go InitServer()
-}
-
 func InitServer()  {
   reg := prometheus.NewRegistry()
   reg.MustRegister(sent)
@@ -64,24 +53,9 @@ func InitServer()  {
   reg.MustRegister(successes)
   reg.MustRegister(retries)
 
-  // Create a basic router using serve mux and register the prometheus handler
-  mux := http.NewServeMux()
-  mux.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
+  http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
+  log.Fatal(http.ListenAndServe(":9000", nil))
 
-  // Create a channel to listen for interrupts or signals from OS
-  exit := make(chan os.Signal, 1)
-  signal.Notify(exit, os.Interrupt, syscall.SIGTERM)
-  
-  /// Start Server and log errors
-  go func() {
-    log.Println("Starting Server on PORT : 9000")
-    if err := http.ListenAndServe(":9000", mux); err != nil {
-      log.Fatal(err)
-    }
-  }()
-
-  // Wait for an interrupt or signal from OS
-  <-exit
   log.Println("Stopping Server")
 
   // Wait for server shutdown

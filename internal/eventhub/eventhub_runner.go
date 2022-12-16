@@ -42,7 +42,7 @@ func Run() {
     randomName := generate(8)
 
     if config.VerboseLevel > 1 {
-      fmt.Printf("{%q} > Recieved event pack", randomName)
+      fmt.Printf("{%q} > Recieved event pack\n", randomName)
     }
 
     partitionClient := processor.NextPartitionClient(context.TODO())

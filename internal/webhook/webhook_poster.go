@@ -15,10 +15,6 @@ type WebhookPoster struct {
   httpClient                *httpclient.HttpClientHandler
 }
 
-func NewWebhookPoster() *WebhookPoster {
-  return &WebhookPoster{}
-}
-
 func (w *WebhookPoster) InitConfig(f *forwarder.ForwarderConfiguration) {
   w.forwarderConfiguration = f
   w.httpClient = httpclient.NewHttpClientHandler()
@@ -38,7 +34,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
   delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 
   if w.forwarderConfiguration.VerboseLevel > 3 {
-    fmt.Printf("%s %d > POST event to : %s", mainEventName, eventNumber, w.forwarderConfiguration.WebSinkURL)
+    fmt.Printf("%s %d > POST \n", mainEventName, eventNumber)
   }
 
   f := forwarder.ForwarderStatistics{}
@@ -53,8 +49,8 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
   status := response.StatusCode == 200 // OK
 
   for !status && retries <= w.forwarderConfiguration.PostMaxRetries {
-    fmt.Printf("%s %d > **Error sending POST, retry %d, result: [%d] %s", mainEventName, eventNumber, retries, response.StatusCode, response.Body)
-    
+    fmt.Printf("%s %d > **Error sending POST, retry %d, result: [%d]\n", mainEventName, eventNumber, retries, response.StatusCode)
+
     retries++
 
     time.Sleep(time.Duration(delay) * time.Millisecond)
@@ -65,7 +61,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
     response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
 
     if err != nil {
-      fmt.Printf("%s %d > **Error sending POST, retry %d, result: [%d] %s", mainEventName, eventNumber, retries, response.StatusCode, response.Body)
+      log.Fatalln(err)
     }
 
     status = response.StatusCode == 200 // OK
@@ -74,13 +70,13 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
   if status {
     f.IncreaseSuccesses()
     if w.forwarderConfiguration.VerboseLevel > 3 {
-      fmt.Printf("%s %d > Post response OK", mainEventName, eventNumber)
+      fmt.Printf("%s %d > Post response [%d]\n", mainEventName, eventNumber, response.StatusCode)
     }
 
     return true, nil
   } else {
     f.IncreaseErrors()
-    fmt.Printf("%s %d > **Error post response after max retries, gave up: [%d] %s", mainEventName, eventNumber, response.StatusCode, response.Body)
+    fmt.Printf("%s %d > **Error post response after max retries, gave up: [%d]\n", mainEventName, eventNumber, response.StatusCode)
 
     return false, err
   }

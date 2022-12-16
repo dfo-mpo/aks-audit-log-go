@@ -20,10 +20,6 @@ type ForwarderConfiguration struct {
   PostRetryIncrementalDelay       int
 }
 
-func NewForwarderConfiguration() *ForwarderConfiguration {
-  return &ForwarderConfiguration{}
-}
-
 func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
   fmt.Println("InitConfig")
 
