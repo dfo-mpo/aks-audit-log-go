@@ -11,7 +11,7 @@ RUN adduser -u 1001 -D -g '' appuser
 WORKDIR /app
 
 COPY . .
-# Fetch dependencies.
+# Fetch dependencies
 RUN go mod download
 
 # Build the binary
@@ -26,7 +26,7 @@ LABEL org.opencontainers.image.source="https://github.com/JuanPabloSGU/aks-audit
 LABEL org.opencontainers.image.description="Forward AKS audit logs to falco"
 LABEL maintainer="Alexandre.Brassard-Desjardins@dfo-mpo.gc.ca"
 
-# Import from build.
+# Import from build
 COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /etc/passwd /etc/passwd
@@ -34,8 +34,7 @@ COPY --from=build /etc/passwd /etc/passwd
 # Copy our static executable
 COPY --from=build /aks-audit-log-go /aks-audit-log-go
 
-# Use an unprivileged user.
+# Use an unprivileged user
 USER appuser
 
-# Run the hello binary.
 ENTRYPOINT ["/aks-audit-log-go"]
