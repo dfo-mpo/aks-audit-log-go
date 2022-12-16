@@ -36,8 +36,6 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (bool,
     record := record.(map[string]interface{})
     auditEventStr := record["properties"].(map[string]interface{})["log"].(string)
 
-    fmt.Println("before verboseLevel")
-    fmt.Println(h.forwarderConfiguration)
     if h.forwarderConfiguration.VerboseLevel > 2 {
       h.ConsoleWriteEventSummary(auditEventStr, mainEventName, i)
     }
