@@ -5,8 +5,6 @@ import (
   "log"
   "os"
   "strconv"
-
-  "github.com/joho/godotenv"
 )
 
 type ForwarderConfiguration struct {
@@ -27,11 +25,6 @@ func NewForwarderConfiguration() *ForwarderConfiguration {
 }
 
 func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
-  err := godotenv.Load()
-  if err != nil {
-    log.Fatal("Error loading .env file")
-  }
-
   fmt.Println("InitConfig")
 
   f.EhubNamespaceConnectionString = os.Getenv("EHUBNAMESPACECONNECTIONSTRING")
@@ -59,12 +52,14 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
     log.Fatal("WebSinkURL is not set")
   }
 
-  verboseLevel := os.Getenv("VERBOSELEVEL")
-  if verboseLevel != "" {
-    f.VerboseLevel, err = strconv.Atoi(verboseLevel)
+  verboseLevelFromENV := os.Getenv("VERBOSELEVEL")
+  if verboseLevelFromENV != "" {
+    verboseLevel, err := strconv.Atoi(verboseLevelFromENV)
     if err != nil {
       log.Fatal("VerboseLevel is not set")
     }
+
+    f.VerboseLevel = verboseLevel
   }
 
   f.PostMaxRetries = 5
