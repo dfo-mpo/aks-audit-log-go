@@ -2,21 +2,21 @@ package main
 
 import (
 	"fmt"
-	"github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
 	"github.com/JuanPabloSGU/aks-audit-log-go/internal/eventhub"
+	"github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
 )
 
 func main() {
-  fmt.Println("AKS Kuberenetes audit log forwarder from Event Hubs to Agent")
-  fmt.Println("Starting Prometheus statistics")
+	fmt.Println("AKS Kuberenetes audit log forwarder from Event Hubs to Agent")
+	fmt.Println("Starting Prometheus statistics")
 
-  fmt.Println("Starting Server")
+	fmt.Println("Starting Server")
 
-  go forwarder.InitServer() 
-  
-  fmt.Println("Testing")
+	go forwarder.InitServer()
 
-  eventhub.Run()
+	fmt.Println("Testing")
 
-  fmt.Println("Program end")
+	eventhub.Run()
+
+	fmt.Println("Program end")
 }

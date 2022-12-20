@@ -6,17 +6,17 @@ import (
 )
 
 type HttpClientHandler struct {
-  client *http.Client
+	client *http.Client
 }
 
 func NewHttpClientHandler() *HttpClientHandler {
-  return &HttpClientHandler{client: &http.Client{}}
+	return &HttpClientHandler{client: &http.Client{}}
 }
 
 func (h *HttpClientHandler) GetAsync(url string) (*http.Response, error) {
-  return h.client.Get(url)
+	return h.client.Get(url)
 }
 
-func (h *HttpClientHandler) PostAsync(url string, contentType string, body string) (*http.Response, error)  {
- return h.client.Post(url, contentType, strings.NewReader(body))
+func (h *HttpClientHandler) PostAsync(url string, contentType string, body string) (*http.Response, error) {
+	return h.client.Post(url, contentType, strings.NewReader(body))
 }
