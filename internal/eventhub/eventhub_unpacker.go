@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
-	"github.com/JuanPabloSGU/aks-audit-log-go/internal/webhook"
+	"github.com/jemag/aks-audit-log-go/internal/forwarder"
+	"github.com/jemag/aks-audit-log-go/internal/webhook"
 )
 
 type HubEventUnpacker struct {

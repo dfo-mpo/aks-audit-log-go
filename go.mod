@@ -1,4 +1,4 @@
-module github.com/JuanPabloSGU/aks-audit-log-go
+module github.com/jemag/aks-audit-log-go
 
 go 1.19
 

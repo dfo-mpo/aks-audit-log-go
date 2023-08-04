@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/JuanPabloSGU/aks-audit-log-go/internal/eventhub"
-	"github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
+	"github.com/jemag/aks-audit-log-go/internal/eventhub"
+	"github.com/jemag/aks-audit-log-go/internal/forwarder"
 )
 
 func main() {

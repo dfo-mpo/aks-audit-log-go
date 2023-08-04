@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
-	"github.com/JuanPabloSGU/aks-audit-log-go/internal/httpclient"
+	"github.com/jemag/aks-audit-log-go/internal/forwarder"
+	"github.com/jemag/aks-audit-log-go/internal/httpclient"
 )
 
 type WebhookPoster struct {

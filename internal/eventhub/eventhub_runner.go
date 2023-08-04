@@ -11,7 +11,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
-	"github.com/JuanPabloSGU/aks-audit-log-go/internal/forwarder"
+	"github.com/jemag/aks-audit-log-go/internal/forwarder"
 )
 
 func Run() {
@@ -69,28 +69,30 @@ func Run() {
 }
 
 func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, randomName string) error {
-	defer closePartitionResources(partitionClient)
-	receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
-	events, err := partitionClient.ReceiveEvents(receiveCtx, 1, nil)
-	receiveCtxCancel()
+  for{
+    defer closePartitionResources(partitionClient)
+    receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
+    events, err := partitionClient.ReceiveEvents(receiveCtx, 1, nil)
+    receiveCtxCancel()
 
-	if err != nil && !errors.Is(err, context.DeadlineExceeded) {
-		return err
-	}
+    if err != nil && !errors.Is(err, context.DeadlineExceeded) {
+      return err
+    }
 
-	fmt.Printf("Processing %d event(s)\n", len(events))
+    fmt.Printf("Processing %d event(s)\n", len(events))
 
-	for _, event := range events {
-		eventhub.Process(event.Body, randomName)
-	}
+    for _, event := range events {
+      eventhub.Process(event.Body, randomName)
+    }
 
-	if len(events) != 0 {
-		if err := partitionClient.UpdateCheckpoint(context.TODO(), events[len(events)-1]); err != nil {
-			return err
-		}
-	}
+    if len(events) != 0 {
+      if err := partitionClient.UpdateCheckpoint(context.TODO(), events[len(events)-1]); err != nil {
+        return err
+      }
+    }
+  }
 
-	return err
+	return nil
 }
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
