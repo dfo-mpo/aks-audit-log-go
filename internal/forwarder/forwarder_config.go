@@ -23,29 +23,23 @@ type ForwarderConfiguration struct {
 func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 	fmt.Println("InitConfig")
 
-	f.EhubNamespaceConnectionString = os.Getenv("EHUBNAMESPACECONNECTIONSTRING")
-	if f.EhubNamespaceConnectionString == "" {
-		log.Fatal("EhubNamespaceConnectionString is not set")
+	envVars := []struct {
+		value    *string
+		name   string
+		errorMsg string
+	}{
+		{&f.EhubNamespaceConnectionString, "EHUBNAMESPACECONNECTIONSTRING", "EhubNamespaceConnectionString is not set"},
+		{&f.EventHubName, "EVENTHUBNAME", "EventHubName is not set"},
+		{&f.BlobStorageConnectionString, "BLOBSTORAGECONNECTIONSTRING", "BlobStorageConnectionString is not set"},
+		{&f.BlobContainerName, "BLOBCONTAINERNAME", "BlobContainerName is not set"},
+		{&f.WebSinkURL, "WEBSINKURL", "WebSinkURL is not set"},
 	}
 
-	f.EventHubName = os.Getenv("EVENTHUBNAME")
-	if f.EventHubName == "" {
-		log.Fatal("EventHubName is not set")
-	}
-
-	f.BlobStorageConnectionString = os.Getenv("BLOBSTORAGECONNECTIONSTRING")
-	if f.BlobStorageConnectionString == "" {
-		log.Fatal("BlobStorageConnectionString is not set")
-	}
-
-	f.BlobContainerName = os.Getenv("BLOBCONTAINERNAME")
-	if f.BlobContainerName == "" {
-		log.Fatal("BlobContainerName is not set")
-	}
-
-	f.WebSinkURL = os.Getenv("WEBSINKURL")
-	if f.WebSinkURL == "" {
-		log.Fatal("WebSinkURL is not set")
+	for _, envVar := range envVars {
+		*envVar.value = os.Getenv(envVar.name)
+		if *envVar.value == "" {
+			log.Fatal(envVar.errorMsg)
+		}
 	}
 
 	verboseLevelFromENV := os.Getenv("VERBOSELEVEL")
@@ -72,12 +66,4 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 	}
 
 	return f
-}
-
-func (f *ForwarderConfiguration) isValid() bool {
-	return (f.EhubNamespaceConnectionString != "" &&
-		f.BlobStorageConnectionString != "" &&
-		f.WebSinkURL != "" &&
-		f.EventHubName != "" &&
-		f.BlobContainerName != "")
 }
