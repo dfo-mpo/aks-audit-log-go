@@ -28,21 +28,19 @@ var (
 	})
 )
 
-type ForwarderStatistics struct{}
-
-func (f *ForwarderStatistics) IncreaseSent() {
+func IncreaseSent() {
 	sent.Inc()
 }
 
-func (f *ForwarderStatistics) IncreaseErrors() {
+func IncreaseErrors() {
 	errors.Inc()
 }
 
-func (f *ForwarderStatistics) IncreaseSuccesses() {
+func IncreaseSuccesses() {
 	successes.Inc()
 }
 
-func (f *ForwarderStatistics) IncreaseRetries() {
+func IncreaseRetries() {
 	retries.Inc()
 }
 
