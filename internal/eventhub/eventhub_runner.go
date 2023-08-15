@@ -83,7 +83,7 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
     fmt.Printf("Processing %d event(s)\n", len(events))
 
     for _, event := range events {
-      success, err := eventhub.Process(event.Body, randomName)
+      err := eventhub.Process(event.Body, randomName)
       if err != nil {
         return err
       }

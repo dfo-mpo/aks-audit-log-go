@@ -2,7 +2,6 @@ package webhook
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -29,7 +28,7 @@ func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body
 	return response, nil
 }
 
-func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eventNumber int) (bool, error) {
+func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eventNumber int) (error) {
 	retries := 1
 	delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 
@@ -42,7 +41,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
 
 	if err != nil {
-		log.Fatalln(err)
+    return err
 	}
 
 	status := response.StatusCode == 200 // OK
@@ -60,7 +59,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 		response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
 
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
 
 		status = response.StatusCode == 200 // OK
@@ -72,11 +71,11 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 			fmt.Printf("%s %d > Post response [%d]\n", mainEventName, eventNumber, response.StatusCode)
 		}
 
-		return true, nil
+		return nil
 	} else {
 		forwarder.IncreaseErrors()
 		fmt.Printf("%s %d > **Error post response after max retries, gave up: [%d]\n", mainEventName, eventNumber, response.StatusCode)
 
-		return false, err
+		return err
 	}
 }

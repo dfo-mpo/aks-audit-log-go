@@ -35,7 +35,7 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (error
 			// h.ConsoleWriteEventSummary(auditEventStr, mainEventName, i)
 		}
 
-		result, err := h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
+		err := h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
 		if err != nil {
 			return err
 		}
