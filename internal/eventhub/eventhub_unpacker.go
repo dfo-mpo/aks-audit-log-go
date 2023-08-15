@@ -3,7 +3,6 @@ package eventhub
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
 	"github.com/jemag/aks-audit-log-go/internal/webhook"
@@ -32,7 +31,10 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (error
 		auditEventStr := record["properties"].(map[string]interface{})["log"].(string)
 
 		if h.forwarderConfiguration.VerboseLevel > 2 {
-			// h.ConsoleWriteEventSummary(auditEventStr, mainEventName, i)
+      err := h.ConsoleWriteEventSummary(auditEventStr, mainEventName, i)
+      if err != nil {
+        return err
+      }
 		}
 
 		err := h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
@@ -43,19 +45,39 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (error
 	return nil
 }
 
-func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEventName string, eventNumber int) {
+func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEventName string, eventNumber int) (error){
 	var auditEvent map[string]interface{}
 	err := json.Unmarshal(([]byte(auditEventStr)), &auditEvent)
 
 	if err != nil {
-		log.Fatalln(err)
-		fmt.Println(err)
+    return err
 	}
 
-	fmt.Printf("%s %d > READ audit event: %s %s %s %s",
+	var user, verb, resource, name string
+
+	if userVal, ok := auditEvent["user"].(map[string]interface{})["username"].(string); ok {
+		user = userVal
+	}
+
+	if verbVal, ok := auditEvent["verb"].(string); ok {
+		verb = verbVal
+	}
+
+	if objectRef, ok := auditEvent["objectRef"].(map[string]interface{}); ok {
+		if resourceVal, ok := objectRef["resource"].(string); ok {
+			resource = resourceVal
+		}
+		if nameVal, ok := objectRef["name"].(string); ok {
+			name = nameVal
+		}
+	}
+
+  fmt.Printf("%s %d > READ audit event: %s %s %s %s",
 		mainEventName, eventNumber,
-		auditEvent["user"].(map[string]interface{})["username"].(string),
-		auditEvent["verb"].(string),
-		auditEvent["objectRef"].(map[string]interface{})["resource"].(string),
-		auditEvent["objectRef"].(map[string]interface{})["name"].(string))
+		user,
+		verb,
+		resource,
+		name)
+
+  return nil
 }
