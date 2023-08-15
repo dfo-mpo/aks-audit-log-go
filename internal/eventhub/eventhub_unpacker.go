@@ -20,17 +20,12 @@ func (h *HubEventUnpacker) InitConfig(f *forwarder.ForwarderConfiguration) {
 	h.webhookPoster.InitConfig(f)
 }
 
-func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (bool, error) {
+func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (error) {
 	var event map[string]interface{}
 	err := json.Unmarshal(eventJObj, &event)
 	if err != nil {
-		log.Fatalln(err)
-		return false, err
+		return err
 	}
-
-	var results []bool
-
-	ok := true
 
 	for i, record := range event["records"].([]interface{}) {
 		record := record.(map[string]interface{})
@@ -42,18 +37,10 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (bool,
 
 		result, err := h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
 		if err != nil {
-			log.Fatalln(err)
-			return false, err
+			return err
 		}
-
-		results = append(results, result)
 	}
-
-	for _, result := range results {
-		ok = ok && result
-	}
-
-	return ok, nil
+	return nil
 }
 
 func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEventName string, eventNumber int) {
