@@ -28,7 +28,7 @@ func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body
 	return response, nil
 }
 
-func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eventNumber int) (error) {
+func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eventNumber int) error {
 	retries := 1
 	delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 

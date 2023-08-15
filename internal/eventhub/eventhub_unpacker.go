@@ -19,7 +19,7 @@ func (h *HubEventUnpacker) InitConfig(f *forwarder.ForwarderConfiguration) {
 	h.webhookPoster.InitConfig(f)
 }
 
-func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (error) {
+func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) error {
 	var event map[string]interface{}
 	err := json.Unmarshal(eventJObj, &event)
 	if err != nil {
@@ -45,7 +45,7 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) (error
 	return nil
 }
 
-func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEventName string, eventNumber int) (error){
+func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEventName string, eventNumber int) error {
 	var auditEvent map[string]interface{}
 	err := json.Unmarshal(([]byte(auditEventStr)), &auditEvent)
 
