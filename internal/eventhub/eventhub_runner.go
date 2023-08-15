@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 	"unsafe"
 
@@ -33,29 +32,30 @@ func Run() {
 	defer consumerClient.Close(context.TODO())
 
 	processor, err := azeventhubs.NewProcessor(consumerClient, checkpointStore, nil)
-
 	if err != nil {
 		panic(err)
 	}
 
 	dispatchPartitionClients := func() {
-		randomName := generate(8)
+    for{
+      randomName := generate(8)
 
-		if config.VerboseLevel > 1 {
-			fmt.Printf("{%q} > Recieved event pack\n", randomName)
-		}
+      if config.VerboseLevel > 1 {
+        fmt.Printf("{%q} > Recieved event pack\n", randomName)
+      }
 
-		partitionClient := processor.NextPartitionClient(context.TODO())
+      partitionClient := processor.NextPartitionClient(context.TODO())
 
-		if partitionClient == nil {
-			log.Fatalln("Next partitionClient failed to be created")
-		}
+      if partitionClient == nil {
+        break
+      }
 
-		go func() {
-			if err := processEvents(eventhub, partitionClient, randomName); err != nil {
-				panic(err)
-			}
-		}()
+      go func() {
+        if err := processEvents(eventhub, partitionClient, randomName); err != nil {
+          panic(err)
+        }
+      }()
+    }
 	}
 
 	go dispatchPartitionClients()
@@ -69,10 +69,11 @@ func Run() {
 }
 
 func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, randomName string) error {
+  defer closePartitionResources(partitionClient)
+  
   for{
-    defer closePartitionResources(partitionClient)
     receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
-    events, err := partitionClient.ReceiveEvents(receiveCtx, 1, nil)
+    events, err := partitionClient.ReceiveEvents(receiveCtx, 100, nil)
     receiveCtxCancel()
 
     if err != nil && !errors.Is(err, context.DeadlineExceeded) {
@@ -91,8 +92,6 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
       }
     }
   }
-
-	return nil
 }
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
