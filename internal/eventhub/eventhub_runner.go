@@ -38,12 +38,6 @@ func Run() {
 
 	dispatchPartitionClients := func() {
     for{
-      randomName := generate(8)
-
-      if config.VerboseLevel > 1 {
-        fmt.Printf("{%q} > Recieved event pack\n", randomName)
-      }
-
       partitionClient := processor.NextPartitionClient(context.TODO())
 
       if partitionClient == nil {
@@ -51,6 +45,12 @@ func Run() {
       }
 
       go func() {
+        randomName := generate(8)
+
+        if config.VerboseLevel > 1 {
+          fmt.Printf("{%q} > Recieved event pack\n", randomName)
+        }
+
         if err := processEvents(eventhub, partitionClient, randomName); err != nil {
           panic(err)
         }
