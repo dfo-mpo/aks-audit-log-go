@@ -49,36 +49,36 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 	}
 
 	verboseLevelENV := os.Getenv("VERBOSELEVEL")
-  verboseLevel, err := strconv.Atoi(verboseLevelENV)
-  if verboseLevelENV == "" || err != nil {
-    f.VerboseLevel = 1
-  } else {
-    f.VerboseLevel = verboseLevel
-  }
+	verboseLevel, err := strconv.Atoi(verboseLevelENV)
+	if verboseLevelENV == "" || err != nil {
+		f.VerboseLevel = 1
+	} else {
+		f.VerboseLevel = verboseLevel
+	}
 
 	postMaxRetriesENV := os.Getenv("POSTMAXRETRIES")
-  postMaxRetries, err := strconv.Atoi(postMaxRetriesENV)
-  if postMaxRetriesENV == "" || err != nil {
-    f.PostMaxRetries = 5
-  } else {
-    f.PostMaxRetries = postMaxRetries
-  }
+	postMaxRetries, err := strconv.Atoi(postMaxRetriesENV)
+	if postMaxRetriesENV == "" || err != nil {
+		f.PostMaxRetries = 5
+	} else {
+		f.PostMaxRetries = postMaxRetries
+	}
 
 	postRetryIncrementalDelayENV := os.Getenv("POSTRETRYINCREMENTALDELAY")
-  postRetryIncrementalDelay, err := strconv.Atoi(postRetryIncrementalDelayENV)
-  if postRetryIncrementalDelayENV == "" || err != nil {
-    f.PostRetryIncrementalDelay = 1000
-  } else {
-    f.PostRetryIncrementalDelay = postRetryIncrementalDelay
-  }
+	postRetryIncrementalDelay, err := strconv.Atoi(postRetryIncrementalDelayENV)
+	if postRetryIncrementalDelayENV == "" || err != nil {
+		f.PostRetryIncrementalDelay = 1000
+	} else {
+		f.PostRetryIncrementalDelay = postRetryIncrementalDelay
+	}
 
 	if f.VerboseLevel > 3 {
 		fmt.Println("EventHubName: {0}", f.EventHubName)
 		fmt.Println("BlobContainerName: {0}", f.BlobContainerName)
 		fmt.Println("WebSinkURL : {0}", f.WebSinkURL)
 		fmt.Println("VerboseLevel: {0}", f.VerboseLevel)
-    fmt.Println("PostMaxRetries: {0}", f.PostMaxRetries)
-    fmt.Println("PostRetryIncrementalDelay: {0}", f.PostRetryIncrementalDelay)
+		fmt.Println("PostMaxRetries: {0}", f.PostMaxRetries)
+		fmt.Println("PostRetryIncrementalDelay: {0}", f.PostRetryIncrementalDelay)
 
 		fmt.Println("EhubNamespaceConnectionString length: {0}", len(f.EhubNamespaceConnectionString))
 		fmt.Println("BlobStorageConnectionString length: {0}", len(f.BlobStorageConnectionString))

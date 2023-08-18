@@ -37,25 +37,25 @@ func Run() {
 	}
 
 	dispatchPartitionClients := func() {
-    for{
-      partitionClient := processor.NextPartitionClient(context.TODO())
+		for {
+			partitionClient := processor.NextPartitionClient(context.TODO())
 
-      if partitionClient == nil {
-        break
-      }
+			if partitionClient == nil {
+				break
+			}
 
-      go func() {
-        randomName := generate(8)
+			go func() {
+				randomName := generate(8)
 
-        if config.VerboseLevel > 1 {
-          fmt.Printf("{%q} > Recieved event pack\n", randomName)
-        }
+				if config.VerboseLevel > 1 {
+					fmt.Printf("{%q} > Recieved event pack\n", randomName)
+				}
 
-        if err := processEvents(eventhub, partitionClient, randomName); err != nil {
-          panic(err)
-        }
-      }()
-    }
+				if err := processEvents(eventhub, partitionClient, randomName); err != nil {
+					panic(err)
+				}
+			}()
+		}
 	}
 
 	go dispatchPartitionClients()
@@ -69,36 +69,36 @@ func Run() {
 }
 
 func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, randomName string) error {
-  defer closePartitionResources(partitionClient)
-  
-  for{
-    receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
-    events, err := partitionClient.ReceiveEvents(receiveCtx, 100, nil)
-    receiveCtxCancel()
+	defer closePartitionResources(partitionClient)
 
-    if err != nil && !errors.Is(err, context.DeadlineExceeded) {
-      return err
-    }
+	for {
+		receiveCtx, receiveCtxCancel := context.WithTimeout(context.TODO(), time.Minute)
+		events, err := partitionClient.ReceiveEvents(receiveCtx, 100, nil)
+		receiveCtxCancel()
 
-    fmt.Printf("Processing %d event(s)\n", len(events))
+		if err != nil && !errors.Is(err, context.DeadlineExceeded) {
+			return err
+		}
 
-    for _, event := range events {
-      err := eventhub.Process(event.Body, randomName)
-      if err != nil {
-        return err
-      }
+		fmt.Printf("Processing %d event(s)\n", len(events))
 
-      if err := partitionClient.UpdateCheckpoint(context.TODO(), event); err != nil {
-          return err
-      }
-    }
+		for _, event := range events {
+			err := eventhub.Process(event.Body, randomName)
+			if err != nil {
+				return err
+			}
 
-    if len(events) != 0 {
-      if err := partitionClient.UpdateCheckpoint(context.TODO(), events[len(events)-1]); err != nil {
-        return err
-      }
-    }
-  }
+			if err := partitionClient.UpdateCheckpoint(context.TODO(), event); err != nil {
+				return err
+			}
+		}
+
+		if len(events) != 0 {
+			if err := partitionClient.UpdateCheckpoint(context.TODO(), events[len(events)-1]); err != nil {
+				return err
+			}
+		}
+	}
 }
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {

@@ -31,10 +31,10 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) error 
 		auditEventStr := record["properties"].(map[string]interface{})["log"].(string)
 
 		if h.forwarderConfiguration.VerboseLevel > 2 {
-      err := h.ConsoleWriteEventSummary(auditEventStr, mainEventName, i)
-      if err != nil {
-        return err
-      }
+			err := h.ConsoleWriteEventSummary(auditEventStr, mainEventName, i)
+			if err != nil {
+				return err
+			}
 		}
 
 		err := h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
@@ -50,7 +50,7 @@ func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEve
 	err := json.Unmarshal(([]byte(auditEventStr)), &auditEvent)
 
 	if err != nil {
-    return err
+		return err
 	}
 
 	var user, verb, resource, name string
@@ -72,12 +72,12 @@ func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEve
 		}
 	}
 
-  fmt.Printf("%s %d > READ audit event: %s %s %s %s",
+	fmt.Printf("%s %d > READ audit event: %s %s %s %s",
 		mainEventName, eventNumber,
 		user,
 		verb,
 		resource,
 		name)
 
-  return nil
+	return nil
 }

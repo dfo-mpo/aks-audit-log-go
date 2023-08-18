@@ -41,7 +41,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
 
 	if err != nil {
-    return err
+		return err
 	}
 
 	status := response.StatusCode == 200 // OK
