@@ -92,12 +92,6 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 				return err
 			}
 		}
-
-		if len(events) != 0 {
-			if err := partitionClient.UpdateCheckpoint(context.TODO(), events[len(events)-1]); err != nil {
-				return err
-			}
-		}
 	}
 }
 
