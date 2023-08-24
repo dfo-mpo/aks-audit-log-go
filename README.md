@@ -23,7 +23,7 @@ This package sends the http POST request to the Falco pod (with k8s-audit plugin
 ## How to run locally
 
 ### Configuration
-There is a `.envrc.example` file that contains the environment variables to be set. You can save a copy as `.envrc` and then source it using `source .envrc` to load the environment variables into your shell session. 
+There is a `.envrc.example` file that contains the environment variables to be configured. You can save a copy as `.envrc` and then source it using `source .envrc` to load the environment variables into your shell session. 
 
 **Note:** `VERBOSELEVEL`, `POSTMAXRETRIES` and `POSTRETRYINCREMENTALDELAY` are optional variables and will default to 1 for `VERBOSELEVEL`, 5 for `POSTMAXRETRIES` and 1000 for `POSTRETRYINCREMENTALDELAY`. 
 
