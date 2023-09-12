@@ -6,4 +6,4 @@ pool:
 
 steps:
 - script: echo 'Hello World'
-  displayName: 'Echo Helo World'
+  displayName: 'Echo Hello World'
