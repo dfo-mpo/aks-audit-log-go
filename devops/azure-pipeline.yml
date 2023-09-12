@@ -2,8 +2,9 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'IWLS-Agent-Pool'
 
 steps:
-- script: echo 'Hello World'
+- bash: |
+    echo 'Hello World'
   displayName: 'Echo Hello World'
