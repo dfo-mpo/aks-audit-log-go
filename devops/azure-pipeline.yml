@@ -1,0 +1,10 @@
+trigger:
+- master
+
+pool:
+  name: 'IWLS-Agent-Pool'
+
+steps:
+- bash: |
+    echo 'Hello World'
+  displayName: 'Echo Hello World'
