@@ -2,7 +2,7 @@ trigger:
 - master
 
 pool:
-  name: 'IWLS-Agent-Pool'
+  name: 'cloud-team-aks'
 
 steps:
 - bash: |
