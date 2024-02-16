@@ -1,12 +1,50 @@
+---
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+pool:
+  name: cloud-team-aks
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: AKS/Automation
 trigger: none
 
 pr:
 - main
 
-pool:
-  name: 'cloud-team-aks'
+variables:
+  - group: global
 
-steps:
-- bash: |
-    echo 'Hello World'
-  displayName: 'Echo Hello World'
+stages:
+  - stage: SecretScan
+    displayName: Secret Scan
+    dependsOn:
+    jobs:
+      - template: pipelines/jobs/trivy-secret-scan.yaml@templates
+
+  - stage: UnitTest
+    displayName: Unit Tests
+    dependsOn:
+    jobs:
+      - template: pipelines/jobs/java-gradle-test.yaml@templates
+
+  - stage: Lint
+    displayName: Lint
+    dependsOn:
+    jobs:
+      - template: pipelines/jobs/java-gradle-checkstyle-lint.yaml@templates
+      - template: pipelines/jobs/yaml-yamllint.yaml@templates
+        parameters:
+          arguments: "-c .yamllint.yaml"
+      - template: pipelines/jobs/trivy-dockerfile-linting.yaml@templates
+
+  - stage: Build
+    displayName: Build
+    dependsOn:
+      - UnitTest
+      - SecretScan
+      - Lint
+    jobs:
+      - template: pipelines/jobs/image-buildkit-local-push.yaml@templates
