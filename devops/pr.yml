@@ -17,7 +17,7 @@ pr:
 variables:
   - group: global
 
-parametes:
+parameters:
   - name: goVersion
     type: string
     default: '1.10'
