@@ -29,12 +29,12 @@ func Run() {
 		panic(err)
 	}
 
-    defer func() {
-        if cerr := consumerClient.Close(context.TODO()); cerr != nil {
-            // Handle the error, you can log it or take appropriate action
-            fmt.Printf("Error closing consumer client: %v\n", cerr)
-        }
-    }()
+	defer func() {
+		if cerr := consumerClient.Close(context.TODO()); cerr != nil {
+			// Handle the error, you can log it or take appropriate action
+			fmt.Printf("Error closing consumer client: %v\n", cerr)
+		}
+	}()
 
 	processor, err := azeventhubs.NewProcessor(consumerClient, checkpointStore, nil)
 	if err != nil {
@@ -50,12 +50,12 @@ func Run() {
 			}
 
 			go func() {
-                randomName, err := generate(8)
-                if err != nil {
-                    // Handle the error, you can log it or take appropriate action
-                    fmt.Printf("Error generating random name: %v\n", err)
-                    return
-                }
+				randomName, err := generate(8)
+				if err != nil {
+					// Handle the error, you can log it or take appropriate action
+					fmt.Printf("Error generating random name: %v\n", err)
+					return
+				}
 
 				if config.VerboseLevel > 1 {
 					fmt.Printf("{%q} > Recieved event pack\n", randomName)
@@ -106,12 +106,12 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 }
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
-    defer func() {
-        if err := partitionClient.Close(context.TODO()); err != nil {
-            // Handle the error, you can log it or take appropriate action
-            fmt.Printf("Error closing partition client: %v\n", err)
-        }
-    }()
+	defer func() {
+		if err := partitionClient.Close(context.TODO()); err != nil {
+			// Handle the error, you can log it or take appropriate action
+			fmt.Printf("Error closing partition client: %v\n", err)
+		}
+	}()
 }
 
 func generate(size int) (string, error) {
@@ -120,7 +120,7 @@ func generate(size int) (string, error) {
 	b := make([]byte, size)
 	_, err := rand.Read(b)
 	if err != nil {
-		return "",err
+		return "", err
 	}
 	for i := 0; i < size; i++ {
 		b[i] = alphabet[b[i]%byte(len(alphabet))]
