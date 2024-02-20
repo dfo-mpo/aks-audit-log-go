@@ -45,7 +45,12 @@ func Run() {
 			}
 
 			go func() {
-				randomName := generate(8)
+                randomName, err := generate(8)
+                if err != nil {
+                    // Handle the error, you can log it or take appropriate action
+                    fmt.Printf("Error generating random name: %v\n", err)
+                    return
+                }
 
 				if config.VerboseLevel > 1 {
 					fmt.Printf("{%q} > Recieved event pack\n", randomName)
@@ -99,14 +104,17 @@ func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClie
 	defer partitionClient.Close(context.TODO())
 }
 
-func generate(size int) string {
+func generate(size int) (string, error) {
 	alphabet := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 	b := make([]byte, size)
-	rand.Read(b)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "",err
+	}
 	for i := 0; i < size; i++ {
 		b[i] = alphabet[b[i]%byte(len(alphabet))]
 	}
 
-	return *(*string)(unsafe.Pointer(&b))
+	return *(*string)(unsafe.Pointer(&b)), nil
 }
