@@ -14,7 +14,7 @@ import (
 )
 
 func Run() {
-	forwarder := forwarder.ForwarderConfiguration{}
+		forwarder := forwarder.ForwarderConfiguration{}
 	eventhub := HubEventUnpacker{}
 	config := forwarder.InitConfig()
 	eventhub.InitConfig(config)
