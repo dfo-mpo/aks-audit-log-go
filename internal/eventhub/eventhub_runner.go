@@ -29,7 +29,12 @@ func Run() {
 		panic(err)
 	}
 
-	defer consumerClient.Close(context.TODO())
+    defer func() {
+        if cerr := consumerClient.Close(context.TODO()); cerr != nil {
+            // Handle the error, you can log it or take appropriate action
+            fmt.Printf("Error closing consumer client: %v\n", cerr)
+        }
+    }()
 
 	processor, err := azeventhubs.NewProcessor(consumerClient, checkpointStore, nil)
 	if err != nil {
@@ -101,7 +106,12 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 }
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
-	defer partitionClient.Close(context.TODO())
+    defer func() {
+        if err := partitionClient.Close(context.TODO()); err != nil {
+            // Handle the error, you can log it or take appropriate action
+            fmt.Printf("Error closing partition client: %v\n", err)
+        }
+    }()
 }
 
 func generate(size int) (string, error) {
