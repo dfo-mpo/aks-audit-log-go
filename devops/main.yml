@@ -1,12 +1,13 @@
+---
 trigger:
   branches:
     include:
-    - main
+      - main
 
 pool:
-  name: 'cloud-team-aks'
+  name: "cloud-team-aks"
 
 steps:
-- bash: |
-    echo 'Hello World'
-  displayName: 'Echo Hello World'
+  - bash: |
+      echo 'Hello World'
+    displayName: "Echo Hello World"
