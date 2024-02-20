@@ -55,15 +55,11 @@ stages:
               version: "${{ parameters.goVersion }}"
             displayName: "Install Go"
 
-          # - script: |
-          #     set -e
-          #     export gopathbin=$(go env GOPATH)/bin
-          #     echo "##vso[task.prependpath]$gopathbin"
-          #     # go install github.com/jstemmer/go-junit-report@v0.9.1
-          #     # go install github.com/axw/gocov/gocov@v1.1.0
-          #     # go install github.com/AlekSi/gocov-xml@v1.0.0
-          #     # go install github.com/matm/gocov-html/cmd/gocov-html@v1.2.0
-          #   displayName: "Install Dependencies"
+          - script: |
+              set -e
+              export gopathbin=$(go env GOPATH)/bin
+              echo "##vso[task.prependpath]$gopathbin"
+            displayName: "Install Dependencies"
 
           - script: |
               gofmt_output=$(gofmt -l .)
@@ -82,7 +78,7 @@ stages:
 
           # yamllint disable rule:line-length
           - script: |
-              curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
+              curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.56.2
               golangci-lint --version
               golangci-lint run
             displayName: "Install and Run GoLintCLI."
