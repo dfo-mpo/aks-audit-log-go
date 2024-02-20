@@ -36,18 +36,16 @@ stages:
   #   jobs:
   #     - template: pipelines/jobs/java-gradle-test.yaml@templates
 
-  # TODO: Add linting
-  # This section is adapted from the Azure/go-amqp repository's Azure Pipelines configuration.
-  # Original source: https://github.com/Azure/go-amqp/blob/main/azure-pipelines.yml#L86C1-L87C33
   - stage: Lint
     displayName: Lint
-  #   dependsOn:
-  #   jobs:
-  #     - template: pipelines/jobs/yaml-yamllint.yaml@templates
-  #       parameters:
-  #         arguments: "-c .yamllint.yaml"
-  #     - template: pipelines/jobs/trivy-dockerfile-linting.yaml@templates
+    dependsOn:
     jobs:
+      - template: pipelines/jobs/yaml-yamllint.yaml@templates
+        parameters:
+          arguments: "-c .yamllint.yaml"
+      - template: pipelines/jobs/trivy-dockerfile-linting.yaml@templates
+      # This section is adapted from the Azure/go-amqp repository's Azure Pipelines configuration.
+      # Original source: https://github.com/Azure/go-amqp/blob/main/azure-pipelines.yml#L86C1-L87C33
       - job: golint
         displayName: Go Linting
         dependsOn:
@@ -56,13 +54,6 @@ stages:
           inputs:
             version: '${{ parameters.goVersion }}'
           displayName: 'Install Go'
-        # - script: |
-        #     # Install Go 1.22
-        #     wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz
-        #     sudo rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
-        #     export PATH=$PATH:/usr/local/go/bin
-        #     go version
-        #   displayName: 'Install Go Application'
 
         - script: |
             set -e
