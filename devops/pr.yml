@@ -75,7 +75,16 @@ stages:
           displayName: 'Install Dependencies'
 
         - script: |
-            gofmt -s -l -w . >&2
+            gofmt_output=$(gofmt -l .)
+
+            if [ -n "$gofmt_output" ]; then
+              echo "Some files are not formatted properly:"
+              echo "$gofmt_output" | sort -u
+              echo "Please run 'gofmt -w .' to fix formatting issues."
+              exit 1
+            else
+              echo "All Go files are properly formatted."
+            fi
           failOnStderr: true
           condition: succeededOrFailed()
           displayName: 'Format Check'
