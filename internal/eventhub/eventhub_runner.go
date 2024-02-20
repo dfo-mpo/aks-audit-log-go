@@ -19,12 +19,21 @@ func Run() {
 	config := forwarder.InitConfig()
 	eventhub.InitConfig(config)
 
-	checkpointStore, err := checkpoints.NewBlobStoreFromConnectionString(config.BlobStorageConnectionString, config.BlobContainerName, nil)
+	checkpointStore, err := checkpoints.NewBlobStoreFromConnectionString(
+		config.BlobStorageConnectionString,
+		config.BlobContainerName,
+		nil,
+	)
 	if err != nil {
 		panic(err)
 	}
 
-	consumerClient, err := azeventhubs.NewConsumerClientFromConnectionString(config.EhubNamespaceConnectionString, config.EventHubName, azeventhubs.DefaultConsumerGroup, nil)
+	consumerClient, err := azeventhubs.NewConsumerClientFromConnectionString(
+		config.EhubNamespaceConnectionString,
+		config.EventHubName,
+		azeventhubs.DefaultConsumerGroup,
+		nil,
+	)
 	if err != nil {
 		panic(err)
 	}

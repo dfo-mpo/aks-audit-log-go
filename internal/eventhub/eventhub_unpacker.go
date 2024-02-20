@@ -48,7 +48,6 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) error 
 func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEventName string, eventNumber int) error {
 	var auditEvent map[string]interface{}
 	err := json.Unmarshal(([]byte(auditEventStr)), &auditEvent)
-
 	if err != nil {
 		return err
 	}

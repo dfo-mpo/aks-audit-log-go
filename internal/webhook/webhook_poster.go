@@ -39,7 +39,6 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	forwarder.IncreaseSent()
 
 	response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
-
 	if err != nil {
 		return err
 	}
@@ -47,7 +46,13 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	status := response.StatusCode == 200 // OK
 
 	for !status && retries <= w.forwarderConfiguration.PostMaxRetries {
-		fmt.Printf("%s %d > **Error sending POST, retry %d, result: [%d]\n", mainEventName, eventNumber, retries, response.StatusCode)
+		fmt.Printf(
+			"%s %d > **Error sending POST, retry %d, result: [%d]\n",
+			mainEventName,
+			eventNumber,
+			retries,
+			response.StatusCode,
+		)
 
 		retries++
 
@@ -57,7 +62,6 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 		forwarder.IncreaseRetries()
 
 		response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
-
 		if err != nil {
 			return err
 		}
