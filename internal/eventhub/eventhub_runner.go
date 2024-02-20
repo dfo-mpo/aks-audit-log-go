@@ -10,6 +10,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/container"
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
 )
 
@@ -18,12 +19,11 @@ func Run() {
 	eventhub := HubEventUnpacker{}
 	config := forwarder.InitConfig()
 	eventhub.InitConfig(config)
-
-	checkpointStore, err := checkpoints.NewBlobStoreFromConnectionString(
-		config.BlobStorageConnectionString,
-		config.BlobContainerName,
-		nil,
-	)
+	checkClient, err := container.NewClientFromConnectionString(config.BlobStorageConnectionString, config.BlobContainerName, nil)
+	if err != nil {
+		panic(err)
+	}
+	checkpointStore, err := checkpoints.NewBlobStore(checkClient, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -107,7 +107,7 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 				return err
 			}
 
-			if err := partitionClient.UpdateCheckpoint(context.TODO(), event); err != nil {
+			if err := partitionClient.UpdateCheckpoint(context.TODO(), event, nil); err != nil {
 				return err
 			}
 		}
