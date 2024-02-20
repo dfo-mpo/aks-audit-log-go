@@ -52,10 +52,17 @@ stages:
         displayName: Go Linting
         dependsOn:
         steps:
-        - task: GoTool@0
-          inputs:
-            version: '${{ parameters.goVersion }}'
-          displayName: 'Install Go'
+        # - task: GoTool@0
+        #   inputs:
+        #     version: '${{ parameters.goVersion }}'
+        #   displayName: 'Install Go'
+        - script: |
+            # Install Go 1.22
+            wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz
+            rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
+            export PATH=$PATH:/usr/local/go/bin
+            go version
+          displayName: 'Install Go Application'
 
         - script: |
             set -e
