@@ -2,7 +2,7 @@
 #  ╭──────────────────────────────────────────────────────────╮
 #  │                       build stage                        │
 #  ╰──────────────────────────────────────────────────────────╯
-FROM golang:1.19.4-alpine3.17@sha256:f33331e12ca70192c0dbab2d0a74a52e1dd344221507d88aaea605b0219a212f as build
+FROM golang:1.22.0-alpine3.19@sha256:8e96e6cff6a388c2f70f5f662b64120941fcd7d4b89d62fec87520323a316bd9 as build
 RUN apk update && apk add --no-cache git ca-certificates tzdata && update-ca-certificates
 
 # Create appuser
