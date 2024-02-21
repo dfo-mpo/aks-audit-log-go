@@ -3,8 +3,8 @@ module github.com/jemag/aks-audit-log-go
 go 1.19
 
 require (
-	github.com/prometheus/client_golang v1.14.0
 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs v0.3.0
+	github.com/prometheus/client_golang v1.14.0
 )
 
 require (
