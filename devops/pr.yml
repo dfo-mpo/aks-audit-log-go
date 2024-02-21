@@ -12,7 +12,7 @@ resources:
 trigger: none
 
 pr:
-- main
+  - main
 
 variables:
   - group: global
@@ -20,7 +20,7 @@ variables:
 parameters:
   - name: goVersion
     type: string
-    default: '1.20'
+    default: "1.20"
 
 stages:
   - stage: SecretScan
@@ -29,98 +29,40 @@ stages:
     jobs:
       - template: pipelines/jobs/trivy-secret-scan.yaml@templates
 
-  # TODO: Add unit testing
-  # - stage: UnitTest
-  #   displayName: Unit Tests
-  #   dependsOn:
-  #   jobs:
-  #     - template: pipelines/jobs/java-gradle-test.yaml@templates
-
-  # TODO: Add linting
-  # This section is adapted from the Azure/go-amqp repository's Azure Pipelines configuration.
-  # Original source: https://github.com/Azure/go-amqp/blob/main/azure-pipelines.yml#L86C1-L87C33
   - stage: Lint
     displayName: Lint
-  #   dependsOn:
-  #   jobs:
-  #     - template: pipelines/jobs/yaml-yamllint.yaml@templates
-  #       parameters:
-  #         arguments: "-c .yamllint.yaml"
-  #     - template: pipelines/jobs/trivy-dockerfile-linting.yaml@templates
     jobs:
-      - job: golint
+      - template: pipelines/jobs/yaml-yamllint.yaml@templates
+        parameters:
+          arguments: "-c .yamllint.yaml"
+      - template: pipelines/jobs/trivy-dockerfile-linting.yaml@templates
+
+      - job: goformat
+        displayName: Go Formatting
+        dependsOn:
+        steps:
+          - script: |
+              gofmt_output=$(gofmt -l .)
+
+              if [ -n "$gofmt_output" ]; then
+                echo "Some files are not formatted properly:"
+                echo "$gofmt_output" | sort -u
+                echo "Please run 'gofmt -w .' to fix formatting issues."
+                exit 1
+              else
+                echo "All Go files are properly formatted."
+              fi
+            failOnStderr: true
+            condition: succeededOrFailed()
+            displayName: "Format Check"
+
+      - job: golinting
         displayName: Go Linting
         dependsOn:
         steps:
-        - task: GoTool@0
-          inputs:
-            version: '${{ parameters.goVersion }}'
-          displayName: 'Install Go'
-        # - script: |
-        #     # Install Go 1.22
-        #     wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz
-        #     sudo rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
-        #     export PATH=$PATH:/usr/local/go/bin
-        #     go version
-        #   displayName: 'Install Go Application'
-
-        - script: |
-            set -e
-            export gopathbin=$(go env GOPATH)/bin
-            echo "##vso[task.prependpath]$gopathbin"
-            # go install github.com/jstemmer/go-junit-report@v0.9.1
-            # go install github.com/axw/gocov/gocov@v1.1.0
-            # go install github.com/AlekSi/gocov-xml@v1.0.0
-            # go install github.com/matm/gocov-html/cmd/gocov-html@v1.2.0
-          displayName: 'Install Dependencies'
-
-        - script: |
-            gofmt_output=$(gofmt -l .)
-
-            if [ -n "$gofmt_output" ]; then
-              echo "Some files are not formatted properly:"
-              echo "$gofmt_output" | sort -u
-              echo "Please run 'gofmt -w .' to fix formatting issues."
-              exit 1
-            else
-              echo "All Go files are properly formatted."
-            fi
-          failOnStderr: true
-          condition: succeededOrFailed()
-          displayName: 'Format Check'
-
-        - script: |
-            curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
-            golangci-lint --version
-            golangci-lint run
-          displayName: 'Install and Run GoLintCLI.'
-
-        # - script: |
-        #     set -e
-        #     export TEST_CORPUS=1
-        #     echo '##[command]Starting broker at $(AMQP_BROKER_ADDR)'
-        #     $(Pipeline.Workspace)/azure-amqp/bin/Debug/TestAmqpBroker/net462/TestAmqpBroker.exe $AMQP_BROKER_ADDR /headless &
-        #     brokerPID=$!
-        #     echo '##[section]Starting tests'
-        #     go test -race -v -coverprofile=coverage.txt -covermode atomic ./... 2>&1 | tee gotestoutput.log 
-        #     go-junit-report < gotestoutput.log > report.xml
-        #     kill $brokerPID
-        #     gocov convert coverage.txt > coverage.json
-        #     gocov-xml < coverage.json > coverage.xml
-        #     gocov-html < coverage.json > coverage.html
-        #   displayName: 'Run Tests'
-        #
-        # - task: PublishTestResults@2
-        #   inputs:
-        #     testRunner: JUnit
-        #     testResultsFiles: report.xml
-        #     failTaskOnFailedTests: true
-        #
-        # - task: PublishCodeCoverageResults@1
-        #   inputs:
-        #     codeCoverageTool: Cobertura 
-        #     summaryFileLocation: coverage.xml
-        #     additionalCodeCoverageFiles: coverage.html
+          - script: |
+              golangci-lint run
+            displayName: "Run GoLintCLI."
 
   - stage: Build
     displayName: Build
