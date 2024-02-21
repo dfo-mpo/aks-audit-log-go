@@ -34,23 +34,15 @@ stages:
   - stage: Lint
     displayName: Lint
     jobs:
-      - job: yamllint
-        displayName: Yaml Linting
-        dependsOn:
-          - template: pipelines/jobs/trivy-dockerfile-linting.yaml@templates
-            parameters:
-              arguments: "-c .yamllint.yaml"
-
-      - job: dockerlint
-        displayName: Docker Linting
-        dependsOn:
-          - template: pipelines/jobs/yaml-yamllint.yaml@templates
-            parameters:
-              arguments: "-c .yamllint.yaml"
+      - template: pipelines/jobs/yaml-yamllint.yaml@templates
+        parameters:
+          arguments: "-c .yamllint.yaml"
+      - template: pipelines/jobs/trivy-dockerfile-linting.yaml@templates
 
       - job: goformat
         displayName: Go Formatting
         dependsOn:
+        steps:
           - script: |
               gofmt_output=$(gofmt -l .)
 
@@ -69,6 +61,7 @@ stages:
       - job: golinting
         displayName: Go Linting
         dependsOn:
+        steps:
           - script: |
               curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
               golangci-lint --version
