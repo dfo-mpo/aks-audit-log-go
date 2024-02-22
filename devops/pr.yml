@@ -23,6 +23,49 @@ parameters:
     default: "1.20"
 
 stages:
+  - stage: UnitTest
+    displayName: Unit Tests
+    dependsOn:
+    jobs:
+      - job: dependencies
+        displayName: Install Dependencies
+        dependsOn:
+        steps:
+          - script: |
+              set -eo pipefail
+              go install github.com/jstemmer/go-junit-report@v0.9.1
+              go install github.com/axw/gocov/gocov@v1.1.0
+              go install github.com/AlekSi/gocov-xml@v1.0.0
+              go install github.com/matm/gocov-html/cmd/gocov-html@v1.2.0
+            displayName: "Install Dependencies"
+
+      - job: tests
+        displayName: Testing
+        dependsOn:
+        steps:
+          - script: |
+              set -eo pipefail
+              echo '##[section]Starting tests'
+              go test -race -v -coverprofile=coverage.txt -covermode atomic ./... 2>&1 | tee gotestoutput.log 
+              go-junit-report < gotestoutput.log > report.xml
+              kill $brokerPID
+              gocov convert coverage.txt > coverage.json
+              gocov-xml < coverage.json > coverage.xml
+              gocov-html < coverage.json > coverage.html
+            displayName: "Run Tests"
+
+          - task: PublishTestResults@2
+            inputs:
+              testRunner: JUnit
+              testResultsFiles: report.xml
+              failTaskOnFailedTests: true
+
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: coverage.xml
+              additionalCodeCoverageFiles: coverage.html
+
   - stage: SecretScan
     displayName: Secret Scan
     dependsOn:
@@ -67,7 +110,7 @@ stages:
   - stage: Build
     displayName: Build
     dependsOn:
-      # - UnitTest
+      - UnitTest
       - SecretScan
       - Lint
     jobs:
