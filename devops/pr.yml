@@ -17,11 +17,6 @@ pr:
 variables:
   - group: global
 
-parameters:
-  - name: goVersion
-    type: string
-    default: "1.20"
-
 stages:
   - stage: UnitTest
     displayName: Unit Tests
@@ -54,12 +49,20 @@ stages:
               gocov-html < coverage.json > coverage.html
             displayName: "Run Tests"
 
+      - job: publishTests
+        displayName: Publish Test Results
+        dependsOn:
+        steps:
           - task: PublishTestResults@2
             inputs:
               testRunner: JUnit
               testResultsFiles: report.xml
               failTaskOnFailedTests: true
 
+      - job: publishCoverage
+        displayName: Publish Coverage Results
+        dependsOn:
+        steps:
           - task: PublishCodeCoverageResults@1
             inputs:
               codeCoverageTool: Cobertura
