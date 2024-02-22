@@ -26,21 +26,11 @@ stages:
         displayName: Testing
         dependsOn:
         steps:
-          - script: |
-              set -eo pipefail
-              go install github.com/jstemmer/go-junit-report@v0.9.1
-            displayName: "Install Dependencies"
-          - script: |
-              set -eo pipefail
-              echo '##[section]Starting tests'
-              go test -race -v -covermode atomic ./... 2>&1 | go-junit-report -set-exit-code > report.xml 
-              kill $brokerPID
-            displayName: "Run Tests"
-          - task: PublishTestResults@2
+          - task: Go@0
             inputs:
-              testRunner: JUnit
-              testResultsFiles: report.xml
-              failTaskOnFailedTests: true
+              command: "test"
+              arguments: "-v"
+              workingDirectory: "$(System.DefaultWorkingDirectory)"
 
   - stage: SecretScan
     displayName: Secret Scan
