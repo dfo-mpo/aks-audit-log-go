@@ -51,6 +51,7 @@ stages:
         dependsOn:
         steps:
           - script: |
+              set -eo pipefail
               gofmt_output=$(gofmt -l .)
 
               if [ -n "$gofmt_output" ]; then
