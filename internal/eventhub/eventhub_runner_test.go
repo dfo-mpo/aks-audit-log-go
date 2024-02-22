@@ -23,7 +23,7 @@ func TestGenerate(t *testing.T) {
 	// Assert that the generated string contains only characters from the alphabet
 	alphabet := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	for _, char := range result {
-		if strings.ContainsRune(alphabet, char) {
+		if !strings.ContainsRune(alphabet, char) {
 			t.Errorf("generate returned a string containing an invalid character: %c", char)
 		}
 	}
