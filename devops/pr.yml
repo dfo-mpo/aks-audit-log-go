@@ -33,8 +33,8 @@ stages:
           - script: |
               set -eo pipefail
               echo '##[section]Starting tests'
-              go test -race -v -covermode atomic ./... 2>&1 | tee gotestoutput.log 
-              go-junit-report < gotestoutput.log > report.xml
+              go test -race -v -covermode atomic ./... 2>&1 
+              | go-junit-report -set-exit-code > report.xml 
               kill $brokerPID
             displayName: "Run Tests"
           - task: PublishTestResults@2
