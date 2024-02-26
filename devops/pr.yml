@@ -20,21 +20,16 @@ variables:
 stages:
   - stage: UnitTest
     displayName: Unit Tests
-    dependsOn:
     jobs:
       - job: tests
         displayName: Testing
-        dependsOn:
         steps:
-          - task: Go@0
-            inputs:
-              command: "test"
-              arguments: "-v ./..."
-              workingDirectory: "$(System.DefaultWorkingDirectory)"
+          - script: |
+              set -eo pipefail
+              go test -v ./...
 
   - stage: SecretScan
     displayName: Secret Scan
-    dependsOn:
     jobs:
       - template: pipelines/jobs/trivy-secret-scan.yaml@templates
 
@@ -48,7 +43,6 @@ stages:
 
       - job: goformat
         displayName: Go Formatting
-        dependsOn:
         steps:
           - script: |
               set -eo pipefail
@@ -63,14 +57,13 @@ stages:
                 echo "All Go files are properly formatted."
               fi
             failOnStderr: true
-            condition: succeededOrFailed()
             displayName: "Format Check"
 
       - job: golinting
         displayName: Go Linting
-        dependsOn:
         steps:
           - script: |
+              set -eo pipefail
               golangci-lint run
             displayName: "Run GoLintCLI."
 
