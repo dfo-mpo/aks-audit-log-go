@@ -21,8 +21,22 @@ parameters:
   - name: goVersion
     type: string
     default: "1.20"
-
+    
 stages:
+  - stage: UnitTest
+    displayName: Unit Tests
+    dependsOn:
+    jobs:
+      - job: tests
+        displayName: Testing
+        dependsOn:
+        steps:
+          - task: Go@0
+            inputs:
+              command: "test"
+              arguments: "-v ./..."
+              workingDirectory: "$(System.DefaultWorkingDirectory)"
+
   - stage: SecretScan
     displayName: Secret Scan
     dependsOn:
@@ -39,6 +53,8 @@ stages:
   - stage: Lint
     displayName: Lint
     dependsOn:
+  - stage: Lint
+    displayName: Lint
     jobs:
       - template: pipelines/jobs/yaml-yamllint.yaml@templates
         parameters:
@@ -62,6 +78,12 @@ stages:
             displayName: "Install Dependencies"
 
           - script: |
+      - job: goformat
+        displayName: Go Formatting
+        dependsOn:
+        steps:
+          - script: |
+              set -eo pipefail
               gofmt_output=$(gofmt -l .)
 
               if [ -n "$gofmt_output" ]; then
@@ -82,11 +104,18 @@ stages:
               golangci-lint --version
               golangci-lint run
             displayName: "Install and Run GoLintCLI."
+      - job: golinting
+        displayName: Go Linting
+        dependsOn:
+        steps:
+          - script: |
+              golangci-lint run
+            displayName: "Run GoLintCLI."
 
   - stage: Build
     displayName: Build
     dependsOn:
-      # - UnitTest
+      - UnitTest
       - SecretScan
       - Lint
     jobs:
