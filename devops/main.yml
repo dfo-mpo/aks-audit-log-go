@@ -16,20 +16,8 @@ resources:
 
 variables:
   - group: global
-  - group: example-team-sandbox
-  - group: example-team-dev
-  - group: example-team-test
-  - group: example-team-prod
-  - name: client-id
-    value: 34679fd0-c83e-4860-8bbe-c32453db3810
-  - name: client-secret
-    value: $(ado-aks-git-contributor) # Declared in the ado-test variable group
   - name: full-image
     value: iwlsacr.azurecr.io/aks/system-informer:$(Build.BuildNumber)
-  - name: infra-repo-url
-    value: https://dev.azure.com/foc-poc/aks/_git/ArgoExample
-  - name: app-name
-    value: example-team/system-informer
   - name: registry-repo
     value: iwlsacr.azurecr.io
 
