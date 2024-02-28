@@ -1,13 +1,87 @@
 ---
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+pool:
+  name: cloud-team-aks
+
 trigger:
   branches:
     include:
-      - main
+      - master
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: AKS/Automation
 
-pool:
-  name: "cloud-team-aks"
+variables:
+  - group: global
+  - name: full-image
+    value: iwlsacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
+  - name: registry-repo
+    value: iwlsacr.azurecr.io
 
-steps:
-  - bash: |
-      echo 'Hello World'
-    displayName: "Echo Hello World"
+stages:
+  - stage: UnitTest
+    displayName: Unit Tests
+    jobs:
+      - job: tests
+        displayName: Testing
+        steps:
+          - script: |
+              set -eo pipefail
+              go test -v ./...
+
+  - stage: SecretScan
+    displayName: Secret Scan
+    jobs:
+      - template: pipelines/jobs/trivy-secret-scan.yaml@templates
+
+  - stage: Lint
+    displayName: Lint
+    jobs:
+      - template: pipelines/jobs/yaml-yamllint.yaml@templates
+        parameters:
+          arguments: "-c .yamllint.yaml"
+      - template: pipelines/jobs/trivy-dockerfile-linting.yaml@templates
+
+      - job: goformat
+        displayName: Go Formatting
+        steps:
+          - script: |
+              set -eo pipefail
+              gofmt_output=$(gofmt -l .)
+
+              if [ -n "$gofmt_output" ]; then
+                echo "Some files are not formatted properly:"
+                echo "$gofmt_output" | sort -u
+                echo "Please run 'gofmt -w .' to fix formatting issues."
+                exit 1
+              else
+                echo "All Go files are properly formatted."
+              fi
+            failOnStderr: true
+            displayName: "Format Check"
+
+      - job: golinting
+        displayName: Go Linting
+        steps:
+          - script: |
+              set -eo pipefail
+              golangci-lint run
+            displayName: "Run GoLintCLI."
+
+  - stage: Build
+    displayName: Build
+    dependsOn:
+      - UnitTest
+      - SecretScan
+      - Lint
+    jobs:
+      - template: pipelines/jobs/image-buildkit-local-push.yaml@templates
+        parameters:
+          registryUsername: $(iwls-acr-username)
+          registryPassword: $(iwls-acr-password)
+          registryRepo: $(registry-repo)
+          fullImage: $(full-image)
+          pushImage: true
