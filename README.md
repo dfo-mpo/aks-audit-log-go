@@ -11,21 +11,21 @@ There are four packages: main, httpclient, forwarder and eventhub.
 ### forwarder package
 This package does two things: (1) it sets the configurations using the environment variables and (2) starts a server to maintain statistics.
 
-### eventhub package 
+### eventhub package
 This package is responsible for receiving the events from the event log and unmarshalling the event for it to be sent into a post request.
 
 ### webhook package
 This package ensures that POST request to the Falco pod (with k8s-audit plugin) is properly sent.
 
 ### httpclient package
-This package sends the http POST request to the Falco pod (with k8s-audit plugin) pod. 
+This package sends the http POST request to the Falco pod (with k8s-audit plugin) pod.
 
 ## How to run locally
 
 ### Configuration
-There is a `.envrc.example` file that contains the environment variables to be configured. You can save a copy as `.envrc` and then source it using `source .envrc` to load the environment variables into your shell session. 
+There is a `.envrc.example` file that contains the environment variables to be configured. You can save a copy as `.envrc` and then source it using `source .envrc` to load the environment variables into your shell session.
 
-**Note:** `VERBOSELEVEL`, `POSTMAXRETRIES` and `POSTRETRYINCREMENTALDELAY` are optional variables and will default to 1 for `VERBOSELEVEL`, 5 for `POSTMAXRETRIES` and 1000 for `POSTRETRYINCREMENTALDELAY`. 
+**Note:** `VERBOSELEVEL`, `POSTMAXRETRIES` and `POSTRETRYINCREMENTALDELAY` are optional variables and will default to 1 for `VERBOSELEVEL`, 5 for `POSTMAXRETRIES` and 1000 for `POSTRETRYINCREMENTALDELAY`.
 
 ### Log verbosity
 The service includes a `VerboseLevel` parameter in its deployment configuration that sets what is sent to its log:
