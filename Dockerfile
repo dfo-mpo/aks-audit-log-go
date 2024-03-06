@@ -36,4 +36,7 @@ COPY --from=build /aks-audit-log-go /aks-audit-log-go
 # Use an unprivileged user
 USER appuser
 
+# Expose port 9000
+EXPOSE 9000
+
 ENTRYPOINT ["/aks-audit-log-go"]
