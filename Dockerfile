@@ -3,10 +3,16 @@
 #  │                       build stage                        │
 #  ╰──────────────────────────────────────────────────────────╯
 FROM golang:1.22.0-alpine3.19@sha256:8e96e6cff6a388c2f70f5f662b64120941fcd7d4b89d62fec87520323a316bd9 as build
-RUN apk update && apk add --no-cache git ca-certificates tzdata && update-ca-certificates
+
+# Install necessary packages
+RUN apk update && \
+    apk add --no-cache git ca-certificates tzdata && \
+    update-ca-certificates && \
+    apk add --no-cache shadow
 
 # Create appuser
-RUN adduser -u 1001 -D -g '' appuser
+RUN groupadd -g 1001 appuser \
+    && useradd -u 1001 -g 1001 -m appuser
 
 WORKDIR /app
 
@@ -35,5 +41,8 @@ COPY --from=build /aks-audit-log-go /aks-audit-log-go
 
 # Use an unprivileged user
 USER appuser
+
+# Expose port 9000
+EXPOSE 9000
 
 ENTRYPOINT ["/aks-audit-log-go"]
