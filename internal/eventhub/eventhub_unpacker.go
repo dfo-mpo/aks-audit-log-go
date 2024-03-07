@@ -1,6 +1,7 @@
 package eventhub
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -21,7 +22,9 @@ func (h *HubEventUnpacker) InitConfig(f *forwarder.ForwarderConfiguration) {
 
 func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) error {
 	var event map[string]interface{}
-	err := json.Unmarshal(eventJObj, &event)
+
+	decoder := json.NewDecoder(bytes.NewReader(eventJObj))
+	err := decoder.Decode(&event)
 	if err != nil {
 		return err
 	}
