@@ -3,7 +3,6 @@ package eventhub
 import (
 	"encoding/json"
 	"fmt"
-	"errors"
 	"bytes"
 
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
