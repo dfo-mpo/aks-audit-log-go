@@ -3,6 +3,8 @@ package eventhub
 import (
 	"encoding/json"
 	"fmt"
+	"errors"
+	"bytes"
 
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
 	"github.com/jemag/aks-audit-log-go/internal/webhook"
@@ -21,7 +23,9 @@ func (h *HubEventUnpacker) InitConfig(f *forwarder.ForwarderConfiguration) {
 
 func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) error {
 	var event map[string]interface{}
-	err := json.Unmarshal(eventJObj, &event)
+
+    decoder := json.NewDecoder(bytes.NewReader(eventJObj))
+	err := decoder.Decode(&event)
 	if err != nil {
 		return err
 	}
