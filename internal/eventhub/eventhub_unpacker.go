@@ -22,11 +22,14 @@ func (h *HubEventUnpacker) InitConfig(f *forwarder.ForwarderConfiguration) {
 }
 
 func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string, rateLimiter *rate.Limiter) error {
+	eventJObjString := string(eventJObj)
+	fmt.Printf("About to unmarshall in Process for %s and event object %s",mainEventName,eventJObjString)
 	var event map[string]interface{}
 	err := json.Unmarshal(eventJObj, &event)
 	if err != nil {
 		return err
 	}
+	fmt.Printf("Successfully unmarshalled in Process for %s and event object %s",mainEventName,eventJObjString)
 
 	for i, record := range event["records"].([]interface{}) {
 		ctx := context.Background()
@@ -53,11 +56,14 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string, rateLi
 }
 
 func (h HubEventUnpacker) ConsoleWriteEventSummary(auditEventStr string, mainEventName string, eventNumber int) error {
+	fmt.Printf("About to unmarshall in ConsoleWriteEventSummary for %s, event number %d and audit event %s",mainEventName,eventNumber,auditEventStr)
 	var auditEvent map[string]interface{}
 	err := json.Unmarshal(([]byte(auditEventStr)), &auditEvent)
 	if err != nil {
 		return err
 	}
+
+	fmt.Printf("Successfully unmarshalled in ConsoleWriteEventSummary for %s, event number %d and audit event %s",mainEventName,eventNumber,auditEventStr)
 
 	var user, verb, resource, name string
 
