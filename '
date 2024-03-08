@@ -18,8 +18,8 @@ type ForwarderConfiguration struct {
 
 	PostMaxRetries            int
 	PostRetryIncrementalDelay int
-	RateLimiter float64
-	RateLimiterBurst int
+	RateLimitIntervalSeconds int
+	RateLimitBurst int
 }
 
 func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
@@ -74,20 +74,20 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 		f.PostRetryIncrementalDelay = postRetryIncrementalDelay
 	}
 
-	rateLimiterENV := os.Getenv("RATELIMITEREVENTSPERSECONDS")
-	rateLimiter, err := strconv.ParseFloat(rateLimiterENV, 64)
-	if rateLimiterENV == "" || err != nil {
-		f.RateLimiter = 10
+	rateLimitENV := os.Getenv("RATELIMIT")
+	rateLimit, err := strconv.Atoi(rateLimitENV)
+	if rateLimitENV == "" || err != nil {
+		f.RateLimit = 10
 	} else {
-		f.RateLimiter = rateLimiter
+		f.RateLimit = rateLimit
 	}
 
-	rateLimiterBurstENV := os.Getenv("RATELIMITERBURST")
-	rateLimiterBurst, err := strconv.Atoi(rateLimiterBurstENV)
-	if rateLimiterBurstENV == "" || err != nil {
-		f.RateLimiterBurst = 50
+	rateLimitBurstENV := os.Getenv("RATELIMITBURST")
+	rateLimitBurst, err := strconv.Atoi(rateLimitBurstENV)
+	if rateLimitBurstENV == "" || err != nil {
+		f.RateLimitBurst = 50
 	} else {
-		f.RateLimiterBurst = rateLimiterBurst
+		f.RateLimitBurst = rateLimitBurst
 	}
 
 	if f.VerboseLevel > 3 {
@@ -97,8 +97,8 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 		fmt.Println("VerboseLevel: {0}", f.VerboseLevel)
 		fmt.Println("PostMaxRetries: {0}", f.PostMaxRetries)
 		fmt.Println("PostRetryIncrementalDelay: {0}", f.PostRetryIncrementalDelay)
-		fmt.Println("RateLimiter: {0}", f.RateLimiter)
-		fmt.Println("RateLimiterBurst: {0}", f.RateLimiterBurst)
+		fmt.Println("RateLimitIntervalSeconds: {0}", f.RateLimitIntervalSeconds)
+		fmt.Println("RateLimitBurst: {0}", f.RateLimitBurst)
 
 		fmt.Println("EhubNamespaceConnectionString length: {0}", len(f.EhubNamespaceConnectionString))
 		fmt.Println("BlobStorageConnectionString length: {0}", len(f.BlobStorageConnectionString))

@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"context"
 
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
 	"github.com/jemag/aks-audit-log-go/internal/webhook"
+	"golang.org/x/time/rate"
 )
 
 type HubEventUnpacker struct {
@@ -20,7 +22,7 @@ func (h *HubEventUnpacker) InitConfig(f *forwarder.ForwarderConfiguration) {
 	h.webhookPoster.InitConfig(f)
 }
 
-func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) error {
+func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string, rateLimiter *rate.Limiter) error {
 	var event map[string]interface{}
 
 	decoder := json.NewDecoder(bytes.NewReader(eventJObj))
@@ -30,6 +32,11 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) error 
 	}
 
 	for i, record := range event["records"].([]interface{}) {
+		ctx := context.Background()
+		err := rateLimiter.Wait(ctx) // This is a blocking call. Honors the rate limit
+		if err != nil {
+			return err
+		}
 		record := record.(map[string]interface{})
 		auditEventStr := record["properties"].(map[string]interface{})["log"].(string)
 
@@ -40,7 +47,7 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string) error 
 			}
 		}
 
-		err := h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
+		err = h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
 		if err != nil {
 			return err
 		}
