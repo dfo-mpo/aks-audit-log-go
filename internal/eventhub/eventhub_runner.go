@@ -53,6 +53,8 @@ func Run() {
 		panic(err)
 	}
 
+	rateLimiter := rate.NewLimiter(rate.Limit(config.RateLimiter), config.RateLimiterBurst)
+
 	dispatchPartitionClients := func() {
 		for {
 			partitionClient := processor.NextPartitionClient(context.TODO())
@@ -60,8 +62,6 @@ func Run() {
 			if partitionClient == nil {
 				break
 			}
-
-			rateLimiter := rate.NewLimiter(rate.Limit(config.RateLimiter), config.RateLimiterBurst)
 
 			go func() {
 				randomName, err := generate(8)
