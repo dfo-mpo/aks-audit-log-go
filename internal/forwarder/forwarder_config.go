@@ -18,8 +18,8 @@ type ForwarderConfiguration struct {
 
 	PostMaxRetries            int
 	PostRetryIncrementalDelay int
-	RateLimiter float64
-	RateLimiterBurst int
+	RateLimiter               float64
+	RateLimiterBurst          int
 }
 
 func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {

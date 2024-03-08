@@ -1,9 +1,9 @@
 package eventhub
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"context"
 
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
 	"github.com/jemag/aks-audit-log-go/internal/webhook"
