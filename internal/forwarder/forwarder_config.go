@@ -18,6 +18,8 @@ type ForwarderConfiguration struct {
 
 	PostMaxRetries            int
 	PostRetryIncrementalDelay int
+	RateLimiter               float64
+	RateLimiterBurst          int
 }
 
 func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
@@ -72,6 +74,22 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 		f.PostRetryIncrementalDelay = postRetryIncrementalDelay
 	}
 
+	rateLimiterENV := os.Getenv("RATELIMITEREVENTSPERSECONDS")
+	rateLimiter, err := strconv.ParseFloat(rateLimiterENV, 64)
+	if rateLimiterENV == "" || err != nil {
+		f.RateLimiter = 10
+	} else {
+		f.RateLimiter = rateLimiter
+	}
+
+	rateLimiterBurstENV := os.Getenv("RATELIMITERBURST")
+	rateLimiterBurst, err := strconv.Atoi(rateLimiterBurstENV)
+	if rateLimiterBurstENV == "" || err != nil {
+		f.RateLimiterBurst = 50
+	} else {
+		f.RateLimiterBurst = rateLimiterBurst
+	}
+
 	if f.VerboseLevel > 3 {
 		fmt.Println("EventHubName: {0}", f.EventHubName)
 		fmt.Println("BlobContainerName: {0}", f.BlobContainerName)
@@ -79,6 +97,8 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 		fmt.Println("VerboseLevel: {0}", f.VerboseLevel)
 		fmt.Println("PostMaxRetries: {0}", f.PostMaxRetries)
 		fmt.Println("PostRetryIncrementalDelay: {0}", f.PostRetryIncrementalDelay)
+		fmt.Println("RateLimiter: {0}", f.RateLimiter)
+		fmt.Println("RateLimiterBurst: {0}", f.RateLimiterBurst)
 
 		fmt.Println("EhubNamespaceConnectionString length: {0}", len(f.EhubNamespaceConnectionString))
 		fmt.Println("BlobStorageConnectionString length: {0}", len(f.BlobStorageConnectionString))
