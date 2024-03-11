@@ -7,6 +7,7 @@ import (
 
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
 	"github.com/jemag/aks-audit-log-go/internal/httpclient"
+	"github.com/rs/zerolog/log"
 )
 
 type WebhookPoster struct {
@@ -33,7 +34,8 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 
 	if w.forwarderConfiguration.VerboseLevel > 3 {
-		fmt.Printf("%s %d > POST \n", mainEventName, eventNumber)
+		msg := fmt.Sprintf("%s %d > POST", mainEventName, eventNumber)
+		log.Info().Msg(msg)
 	}
 
 	forwarder.IncreaseSent()
@@ -46,13 +48,14 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	status := response.StatusCode == 200 // OK
 
 	for !status && retries <= w.forwarderConfiguration.PostMaxRetries {
-		fmt.Printf(
-			"%s %d > **Error sending POST, retry %d, result: [%d]\n",
+		msg := fmt.Sprintf(
+			"%s %d > **Error sending POST, retry %d, result: [%d]",
 			mainEventName,
 			eventNumber,
 			retries,
 			response.StatusCode,
 		)
+		log.Error().Msg(msg)
 
 		retries++
 
@@ -72,13 +75,15 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	if status {
 		forwarder.IncreaseSuccesses()
 		if w.forwarderConfiguration.VerboseLevel > 3 {
-			fmt.Printf("%s %d > Post response [%d]\n", mainEventName, eventNumber, response.StatusCode)
+			msg := fmt.Sprintf("%s %d > Post response [%d]", mainEventName, eventNumber, response.StatusCode)
+			log.Info().Msg(msg)
 		}
 
 		return nil
 	} else {
 		forwarder.IncreaseErrors()
-		fmt.Printf("%s %d > **Error post response after max retries, gave up: [%d]\n", mainEventName, eventNumber, response.StatusCode)
+		msg := fmt.Sprintf("%s %d > **Error post response after max retries, gave up: [%d]", mainEventName, eventNumber, response.StatusCode)
+		log.Error().Msg(msg)
 
 		return err
 	}

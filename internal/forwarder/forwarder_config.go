@@ -2,9 +2,10 @@ package forwarder
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strconv"
+
+	"github.com/rs/zerolog/log"
 )
 
 type ForwarderConfiguration struct {
@@ -23,31 +24,32 @@ type ForwarderConfiguration struct {
 }
 
 func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
-	fmt.Println("InitConfig")
+	msg := fmt.Sprint("InitConfig")
+	log.Debug().Msg(msg)
 
 	f.EhubNamespaceConnectionString = os.Getenv("EHUBNAMESPACECONNECTIONSTRING")
 	if f.EhubNamespaceConnectionString == "" {
-		log.Fatal("EhubNamespaceConnectionString is not set")
+		log.Fatal().Msg("EhubNamespaceConnectionString is not set")
 	}
 
 	f.EventHubName = os.Getenv("EVENTHUBNAME")
 	if f.EventHubName == "" {
-		log.Fatal("EventHubName is not set")
+		log.Fatal().Msg("EventHubName is not set")
 	}
 
 	f.BlobStorageConnectionString = os.Getenv("BLOBSTORAGECONNECTIONSTRING")
 	if f.BlobStorageConnectionString == "" {
-		log.Fatal("BlobStorageConnectionString is not set")
+		log.Fatal().Msg("BlobStorageConnectionString is not set")
 	}
 
 	f.BlobContainerName = os.Getenv("BLOBCONTAINERNAME")
 	if f.BlobContainerName == "" {
-		log.Fatal("BlobContainerName is not set")
+		log.Fatal().Msg("BlobContainerName is not set")
 	}
 
 	f.WebSinkURL = os.Getenv("WEBSINKURL")
 	if f.WebSinkURL == "" {
-		log.Fatal("WebSinkURL is not set")
+		log.Fatal().Msg("WebSinkURL is not set")
 	}
 
 	verboseLevelENV := os.Getenv("VERBOSELEVEL")
@@ -91,17 +93,35 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 	}
 
 	if f.VerboseLevel > 3 {
-		fmt.Println("EventHubName: {0}", f.EventHubName)
-		fmt.Println("BlobContainerName: {0}", f.BlobContainerName)
-		fmt.Println("WebSinkURL : {0}", f.WebSinkURL)
-		fmt.Println("VerboseLevel: {0}", f.VerboseLevel)
-		fmt.Println("PostMaxRetries: {0}", f.PostMaxRetries)
-		fmt.Println("PostRetryIncrementalDelay: {0}", f.PostRetryIncrementalDelay)
-		fmt.Println("RateLimiter: {0}", f.RateLimiter)
-		fmt.Println("RateLimiterBurst: {0}", f.RateLimiterBurst)
+		msg := fmt.Sprintf("EventHubName: %s", f.EventHubName)
+		log.Info().Msg(msg)
 
-		fmt.Println("EhubNamespaceConnectionString length: {0}", len(f.EhubNamespaceConnectionString))
-		fmt.Println("BlobStorageConnectionString length: {0}", len(f.BlobStorageConnectionString))
+		msg = fmt.Sprintf("BlobContainerName: %s", f.BlobContainerName)
+		log.Info().Msg(msg)
+
+		msg = fmt.Sprintf("WebSinkURL : %s", f.WebSinkURL)
+		log.Info().Msg(msg)
+
+		msg = fmt.Sprintf("VerboseLevel: %d", f.VerboseLevel)
+		log.Info().Msg(msg)
+
+		msg = fmt.Sprintf("PostMaxRetries: %d", f.PostMaxRetries)
+		log.Info().Msg(msg)
+
+		msg = fmt.Sprintf("PostRetryIncrementalDelay: %d", f.PostRetryIncrementalDelay)
+		log.Info().Msg(msg)
+
+		msg = fmt.Sprintf("RateLimiter: %v", f.RateLimiter)
+		log.Info().Msg(msg)
+
+		msg = fmt.Sprintf("RateLimiterBurst: %d", f.RateLimiterBurst)
+		log.Info().Msg(msg)
+
+		msg = fmt.Sprintf("EhubNamespaceConnectionString length: %d", len(f.EhubNamespaceConnectionString))
+		log.Info().Msg(msg)
+
+		msg = fmt.Sprintf("BlobStorageConnectionString length: %d", len(f.BlobStorageConnectionString))
+		log.Info().Msg(msg)
 	}
 
 	return f

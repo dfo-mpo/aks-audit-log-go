@@ -1,12 +1,13 @@
 package forwarder
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -52,9 +53,14 @@ func InitServer() {
 	reg.MustRegister(retries)
 
 	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
-	log.Fatal(http.ListenAndServe(":9000", nil))
+	port := ":9000"
+	err := http.ListenAndServe(port, nil)
+	if err != nil {
+		msg := fmt.Sprintf("Failed to start server on port %s: %v", port, err)
+		log.Fatal().Msg(msg)
+	}
 
-	log.Println("Stopping Server")
+	log.Debug().Msg("Stopping Server")
 
 	// Wait for server shutdown
 	time.Sleep(5 * time.Second)

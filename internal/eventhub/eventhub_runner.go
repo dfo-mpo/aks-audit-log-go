@@ -12,6 +12,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/container"
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/time/rate"
 )
 
@@ -44,7 +45,8 @@ func Run() {
 	defer func() {
 		if cerr := consumerClient.Close(context.TODO()); cerr != nil {
 			// Handle the error, you can log it or take appropriate action
-			fmt.Printf("Error closing consumer client: %v\n", cerr)
+			msg := fmt.Sprintf("Error closing consumer client: %v", cerr)
+			log.Error().Msg(msg)
 		}
 	}()
 
@@ -67,12 +69,14 @@ func Run() {
 				randomName, err := generate(8)
 				if err != nil {
 					// Handle the error, you can log it or take appropriate action
-					fmt.Printf("Error generating random name: %v\n", err)
+					msg := fmt.Sprintf("Error generating random name: %v", err)
+					log.Error().Msg(msg)
 					return
 				}
 
 				if config.VerboseLevel > 1 {
-					fmt.Printf("{%q} > Recieved event pack\n", randomName)
+					msg := fmt.Sprintf("{%v} > Recieved event pack", randomName)
+					log.Info().Msg(msg)
 				}
 
 				if err := processEvents(eventhub, partitionClient, randomName, rateLimiter); err != nil {
@@ -104,7 +108,8 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 			return err
 		}
 
-		fmt.Printf("Processing %d event(s)\n", len(events))
+		msg := fmt.Sprintf("Processing %d event(s)", len(events))
+		log.Debug().Msg(msg)
 
 		for _, event := range events {
 			err := eventhub.Process(event.Body, randomName, rateLimiter)
@@ -123,7 +128,9 @@ func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClie
 	defer func() {
 		if err := partitionClient.Close(context.TODO()); err != nil {
 			// Handle the error, you can log it or take appropriate action
-			fmt.Printf("Error closing partition client: %v\n", err)
+			msg := fmt.Sprintf("Error closing partition client: %v", err)
+			log.Error().Msg(msg)
+
 		}
 	}()
 }
