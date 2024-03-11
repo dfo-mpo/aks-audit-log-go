@@ -24,8 +24,7 @@ type ForwarderConfiguration struct {
 }
 
 func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
-	msg := fmt.Sprint("InitConfig")
-	log.Debug().Msg(msg)
+	log.Debug().Msg("InitConfig")
 
 	f.EhubNamespaceConnectionString = os.Getenv("EHUBNAMESPACECONNECTIONSTRING")
 	if f.EhubNamespaceConnectionString == "" {
