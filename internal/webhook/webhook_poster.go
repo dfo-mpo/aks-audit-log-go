@@ -1,7 +1,6 @@
 package webhook
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -34,8 +33,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 
 	if w.forwarderConfiguration.VerboseLevel > 3 {
-		msg := fmt.Sprintf("%s %d > POST", mainEventName, eventNumber)
-		log.Info().Msg(msg)
+		log.Info().Msgf("%s %d > POST", mainEventName, eventNumber)
 	}
 
 	forwarder.IncreaseSent()
@@ -48,14 +46,13 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	status := response.StatusCode == 200 // OK
 
 	for !status && retries <= w.forwarderConfiguration.PostMaxRetries {
-		msg := fmt.Sprintf(
+		log.Error().Msgf(
 			"%s %d > **Error sending POST, retry %d, result: [%d]",
 			mainEventName,
 			eventNumber,
 			retries,
 			response.StatusCode,
 		)
-		log.Error().Msg(msg)
 
 		retries++
 
@@ -75,15 +72,13 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	if status {
 		forwarder.IncreaseSuccesses()
 		if w.forwarderConfiguration.VerboseLevel > 3 {
-			msg := fmt.Sprintf("%s %d > Post response [%d]", mainEventName, eventNumber, response.StatusCode)
-			log.Info().Msg(msg)
+			log.Info().Msgf("%s %d > Post response [%d]", mainEventName, eventNumber, response.StatusCode)
 		}
 
 		return nil
 	} else {
 		forwarder.IncreaseErrors()
-		msg := fmt.Sprintf("%s %d > **Error post response after max retries, gave up: [%d]", mainEventName, eventNumber, response.StatusCode)
-		log.Error().Msg(msg)
+		log.Error().Msgf("%s %d > **Error post response after max retries, gave up: [%d]", mainEventName, eventNumber, response.StatusCode)
 
 		return err
 	}

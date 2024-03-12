@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"errors"
-	"fmt"
 	"time"
 	"unsafe"
 
@@ -45,8 +44,7 @@ func Run() {
 	defer func() {
 		if cerr := consumerClient.Close(context.TODO()); cerr != nil {
 			// Handle the error, you can log it or take appropriate action
-			msg := fmt.Sprintf("Error closing consumer client: %v", cerr)
-			log.Error().Msg(msg)
+			log.Error().Msgf("Error closing consumer client: %v", cerr)
 		}
 	}()
 
@@ -69,14 +67,12 @@ func Run() {
 				randomName, err := generate(8)
 				if err != nil {
 					// Handle the error, you can log it or take appropriate action
-					msg := fmt.Sprintf("Error generating random name: %v", err)
-					log.Error().Msg(msg)
+					log.Error().Msgf("Error generating random name: %v", err)
 					return
 				}
 
 				if config.VerboseLevel > 1 {
-					msg := fmt.Sprintf("{%v} > Recieved event pack", randomName)
-					log.Info().Msg(msg)
+					log.Info().Msgf("{%v} > Recieved event pack", randomName)
 				}
 
 				if err := processEvents(eventhub, partitionClient, randomName, rateLimiter); err != nil {
@@ -108,8 +104,7 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 			return err
 		}
 
-		msg := fmt.Sprintf("Processing %d event(s)", len(events))
-		log.Debug().Msg(msg)
+		log.Debug().Msgf("Processing %d event(s)", len(events))
 
 		for _, event := range events {
 			err := eventhub.Process(event.Body, randomName, rateLimiter)
@@ -128,8 +123,7 @@ func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClie
 	defer func() {
 		if err := partitionClient.Close(context.TODO()); err != nil {
 			// Handle the error, you can log it or take appropriate action
-			msg := fmt.Sprintf("Error closing partition client: %v", err)
-			log.Error().Msg(msg)
+			log.Error().Msgf("Error closing partition client: %v", err)
 
 		}
 	}()

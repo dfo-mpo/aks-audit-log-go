@@ -3,7 +3,6 @@ package eventhub
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
 	"github.com/jemag/aks-audit-log-go/internal/webhook"
@@ -47,8 +46,7 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string, rateLi
 		auditEventStr := record.Properties.Log
 
 		if h.forwarderConfiguration.VerboseLevel > 2 {
-			msg := fmt.Sprintf("%s %d > READ audit event: %s", mainEventName, i, auditEventStr)
-			log.Info().Msg(msg)
+			log.Info().Msgf("%s %d > READ audit event: %s", mainEventName, i, auditEventStr)
 		}
 
 		err = h.webhookPoster.SendPost(auditEventStr, mainEventName, i)

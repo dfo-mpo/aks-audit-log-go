@@ -1,7 +1,6 @@
 package forwarder
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -56,8 +55,7 @@ func InitServer() {
 	port := ":9000"
 	err := http.ListenAndServe(port, nil)
 	if err != nil {
-		msg := fmt.Sprintf("Failed to start server on port %s: %v", port, err)
-		log.Fatal().Msg(msg)
+		log.Fatal().Msgf("Failed to start server on port %s: %v", port, err)
 	}
 
 	log.Debug().Msg("Stopping Server")

@@ -1,7 +1,6 @@
 package forwarder
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 
@@ -92,35 +91,25 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 	}
 
 	if f.VerboseLevel > 3 {
-		msg := fmt.Sprintf("EventHubName: %s", f.EventHubName)
-		log.Info().Msg(msg)
+		log.Info().Msgf("EventHubName: %s", f.EventHubName)
 
-		msg = fmt.Sprintf("BlobContainerName: %s", f.BlobContainerName)
-		log.Info().Msg(msg)
+		log.Info().Msgf("BlobContainerName: %s", f.BlobContainerName)
 
-		msg = fmt.Sprintf("WebSinkURL : %s", f.WebSinkURL)
-		log.Info().Msg(msg)
+		log.Info().Msgf("WebSinkURL : %s", f.WebSinkURL)
 
-		msg = fmt.Sprintf("VerboseLevel: %d", f.VerboseLevel)
-		log.Info().Msg(msg)
+		log.Info().Msgf("VerboseLevel: %d", f.VerboseLevel)
 
-		msg = fmt.Sprintf("PostMaxRetries: %d", f.PostMaxRetries)
-		log.Info().Msg(msg)
+		log.Info().Msgf("PostMaxRetries: %d", f.PostMaxRetries)
 
-		msg = fmt.Sprintf("PostRetryIncrementalDelay: %d", f.PostRetryIncrementalDelay)
-		log.Info().Msg(msg)
+		log.Info().Msgf("PostRetryIncrementalDelay: %d", f.PostRetryIncrementalDelay)
 
-		msg = fmt.Sprintf("RateLimiter: %v", f.RateLimiter)
-		log.Info().Msg(msg)
+		log.Info().Msgf("RateLimiter: %v", f.RateLimiter)
 
-		msg = fmt.Sprintf("RateLimiterBurst: %d", f.RateLimiterBurst)
-		log.Info().Msg(msg)
+		log.Info().Msgf("RateLimiterBurst: %d", f.RateLimiterBurst)
 
-		msg = fmt.Sprintf("EhubNamespaceConnectionString length: %d", len(f.EhubNamespaceConnectionString))
-		log.Info().Msg(msg)
+		log.Info().Msgf("EhubNamespaceConnectionString length: %d", len(f.EhubNamespaceConnectionString))
 
-		msg = fmt.Sprintf("BlobStorageConnectionString length: %d", len(f.BlobStorageConnectionString))
-		log.Info().Msg(msg)
+		log.Info().Msgf("BlobStorageConnectionString length: %d", len(f.BlobStorageConnectionString))
 	}
 
 	return f
