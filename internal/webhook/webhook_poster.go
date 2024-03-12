@@ -74,6 +74,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 		return nil
 	} else {
 		forwarder.IncreaseErrors()
+		log.Error().Msgf("%s %d > **Error post response after max retries, gave up: [%d]", mainEventName, eventNumber, response.StatusCode)
 
 		return err
 	}
