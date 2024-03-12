@@ -94,9 +94,5 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 
 	log.Info().Msgf("RateLimiterBurst: %d", f.RateLimiterBurst)
 
-	log.Info().Msgf("EhubNamespaceConnectionString length: %d", len(f.EhubNamespaceConnectionString))
-
-	log.Info().Msgf("BlobStorageConnectionString length: %d", len(f.BlobStorageConnectionString))
-
 	return f
 }
