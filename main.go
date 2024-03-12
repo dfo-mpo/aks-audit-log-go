@@ -1,7 +1,8 @@
 package main
 
 import (
-	"flag"
+	"os"
+	"strings"
 
 	"github.com/jemag/aks-audit-log-go/internal/eventhub"
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
@@ -10,12 +11,28 @@ import (
 )
 
 func main() {
-	// Default level for this example is info, unless debug flag is present
-	debug := flag.Bool("debug", false, "sets log level to debug")
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	if *debug {
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	logLevelStr := strings.ToLower(os.Getenv("LOGLEVEL"))
+	if logLevelStr == "" {
+		logLevelStr = "info"
 	}
+	var logLevel zerolog.Level = zerolog.InfoLevel
+	switch logLevelStr {
+	case "debug":
+		logLevel = zerolog.DebugLevel
+	case "info":
+		logLevel = zerolog.InfoLevel
+	case "warn":
+		logLevel = zerolog.WarnLevel
+	case "error":
+		logLevel = zerolog.ErrorLevel
+	case "fatal":
+		logLevel = zerolog.FatalLevel
+	case "panic":
+		logLevel = zerolog.PanicLevel
+	case "trace":
+		logLevel = zerolog.TraceLevel
+	}
+	zerolog.SetGlobalLevel(logLevel)
 
 	log.Debug().Msg("AKS Kuberenetes audit log forwarder from Event Hubs to Agent")
 

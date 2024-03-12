@@ -14,8 +14,6 @@ type ForwarderConfiguration struct {
 	BlobContainerName             string
 	WebSinkURL                    string
 
-	VerboseLevel int
-
 	PostMaxRetries            int
 	PostRetryIncrementalDelay int
 	RateLimiter               float64
@@ -50,14 +48,6 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 		log.Fatal().Msg("WebSinkURL is not set")
 	}
 
-	verboseLevelENV := os.Getenv("VERBOSELEVEL")
-	verboseLevel, err := strconv.Atoi(verboseLevelENV)
-	if verboseLevelENV == "" || err != nil {
-		f.VerboseLevel = 1
-	} else {
-		f.VerboseLevel = verboseLevel
-	}
-
 	postMaxRetriesENV := os.Getenv("POSTMAXRETRIES")
 	postMaxRetries, err := strconv.Atoi(postMaxRetriesENV)
 	if postMaxRetriesENV == "" || err != nil {
@@ -90,27 +80,23 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 		f.RateLimiterBurst = rateLimiterBurst
 	}
 
-	if f.VerboseLevel > 3 {
-		log.Info().Msgf("EventHubName: %s", f.EventHubName)
+	log.Info().Msgf("EventHubName: %s", f.EventHubName)
 
-		log.Info().Msgf("BlobContainerName: %s", f.BlobContainerName)
+	log.Info().Msgf("BlobContainerName: %s", f.BlobContainerName)
 
-		log.Info().Msgf("WebSinkURL : %s", f.WebSinkURL)
+	log.Info().Msgf("WebSinkURL : %s", f.WebSinkURL)
 
-		log.Info().Msgf("VerboseLevel: %d", f.VerboseLevel)
+	log.Info().Msgf("PostMaxRetries: %d", f.PostMaxRetries)
 
-		log.Info().Msgf("PostMaxRetries: %d", f.PostMaxRetries)
+	log.Info().Msgf("PostRetryIncrementalDelay: %d", f.PostRetryIncrementalDelay)
 
-		log.Info().Msgf("PostRetryIncrementalDelay: %d", f.PostRetryIncrementalDelay)
+	log.Info().Msgf("RateLimiter: %v", f.RateLimiter)
 
-		log.Info().Msgf("RateLimiter: %v", f.RateLimiter)
+	log.Info().Msgf("RateLimiterBurst: %d", f.RateLimiterBurst)
 
-		log.Info().Msgf("RateLimiterBurst: %d", f.RateLimiterBurst)
+	log.Info().Msgf("EhubNamespaceConnectionString length: %d", len(f.EhubNamespaceConnectionString))
 
-		log.Info().Msgf("EhubNamespaceConnectionString length: %d", len(f.EhubNamespaceConnectionString))
-
-		log.Info().Msgf("BlobStorageConnectionString length: %d", len(f.BlobStorageConnectionString))
-	}
+	log.Info().Msgf("BlobStorageConnectionString length: %d", len(f.BlobStorageConnectionString))
 
 	return f
 }

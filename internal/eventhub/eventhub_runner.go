@@ -71,9 +71,7 @@ func Run() {
 					return
 				}
 
-				if config.VerboseLevel > 1 {
-					log.Info().Msgf("{%v} > Recieved event pack", randomName)
-				}
+				log.Debug().Msgf("{%v} > Recieved event pack", randomName)
 
 				if err := processEvents(eventhub, partitionClient, randomName, rateLimiter); err != nil {
 					panic(err)

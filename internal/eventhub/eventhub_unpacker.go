@@ -45,9 +45,7 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string, rateLi
 
 		auditEventStr := record.Properties.Log
 
-		if h.forwarderConfiguration.VerboseLevel > 2 {
-			log.Info().Msgf("%s %d > READ audit event: %s", mainEventName, i, auditEventStr)
-		}
+		log.Debug().Msgf("%s %d > READ audit event: %s", mainEventName, i, auditEventStr)
 
 		err = h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
 		if err != nil {
