@@ -41,11 +41,7 @@ func Run() {
 		panic(err)
 	}
 
-	defer func() {
-		if cerr := consumerClient.Close(context.TODO()); cerr != nil {
-			log.Error().Msgf("Error closing consumer client: %v", cerr)
-		}
-	}()
+	defer consumerClient.Close(context.TODO())
 
 	processor, err := azeventhubs.NewProcessor(consumerClient, checkpointStore, nil)
 	if err != nil {
@@ -65,7 +61,6 @@ func Run() {
 			go func() {
 				randomName, err := generate(8)
 				if err != nil {
-					// Handle the error, you can log it or take appropriate action
 					log.Error().Msgf("Error generating random name: %v", err)
 					return
 				}
@@ -117,12 +112,7 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 }
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
-	defer func() {
-		if err := partitionClient.Close(context.TODO()); err != nil {
-			log.Error().Msgf("Error closing partition client: %v", err)
-
-		}
-	}()
+	defer partitionClient.Close(context.TODO())
 }
 
 func generate(size int) (string, error) {
