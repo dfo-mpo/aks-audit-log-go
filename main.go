@@ -12,9 +12,6 @@ import (
 
 func main() {
 	logLevelStr := strings.ToLower(os.Getenv("LOGLEVEL"))
-	if logLevelStr == "" {
-		logLevelStr = "info"
-	}
 	var logLevel zerolog.Level = zerolog.InfoLevel
 	switch logLevelStr {
 	case "debug":

@@ -32,7 +32,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	retries := 1
 	delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 
-	log.Info().Msgf("%s %d > POST", mainEventName, eventNumber)
+	log.Debug().Msgf("%s %d > POST", mainEventName, eventNumber)
 
 	forwarder.IncreaseSent()
 
@@ -69,7 +69,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 
 	if status {
 		forwarder.IncreaseSuccesses()
-		log.Info().Msgf("%s %d > Post response [%d]", mainEventName, eventNumber, response.StatusCode)
+		log.Debug().Msgf("%s %d > Post response [%d]", mainEventName, eventNumber, response.StatusCode)
 
 		return nil
 	} else {

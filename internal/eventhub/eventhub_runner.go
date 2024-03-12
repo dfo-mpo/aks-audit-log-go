@@ -43,7 +43,6 @@ func Run() {
 
 	defer func() {
 		if cerr := consumerClient.Close(context.TODO()); cerr != nil {
-			// Handle the error, you can log it or take appropriate action
 			log.Error().Msgf("Error closing consumer client: %v", cerr)
 		}
 	}()
@@ -120,7 +119,6 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
 	defer func() {
 		if err := partitionClient.Close(context.TODO()); err != nil {
-			// Handle the error, you can log it or take appropriate action
 			log.Error().Msgf("Error closing partition client: %v", err)
 
 		}
