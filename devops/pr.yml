@@ -35,6 +35,22 @@ stages:
     jobs:
       - template: pipelines/jobs/trivy-secret-scan.yaml@templates
 
+  - stage: AdvancedSecurity
+    displayName: Advanced Security
+    dependsOn:
+    jobs:
+      - job: CodeScan
+        displayName: Code Scan
+        steps:
+          - task: AdvancedSecurity-Codeqal-Init@1
+            inputs:
+              language: go
+          - task: AdvancedSecurity-Codeql-Analyze@1
+      - job: DependencyScan
+        displayName: Dependency Scan
+        steps:
+          - task: AdvancedSecurity-Dependency-Scanning@1
+
   - stage: Lint
     displayName: Lint
     dependsOn:
