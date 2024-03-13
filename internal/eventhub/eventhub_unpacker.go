@@ -31,7 +31,7 @@ type Event struct {
 
 func (h HubEventUnpacker) Process(eventJObj []byte, partitionID string, eventID int64, rateLimiter *rate.Limiter) error {
 	var event Event
-	err := json.Unmarshal(eventJObj, &event)
+	err := UnmarshallEvent(eventJObj, &event)
 	if err != nil {
 		return err
 	}
@@ -51,6 +51,14 @@ func (h HubEventUnpacker) Process(eventJObj []byte, partitionID string, eventID 
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func UnmarshallEvent(eventJObj []byte, event *Event) error {
+	err := json.Unmarshal(eventJObj, &event)
+	if err != nil {
+		return err
 	}
 	return nil
 }
