@@ -29,7 +29,7 @@ func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body
 }
 
 func (w *WebhookPoster) SendPost(auditEventStr string, partitionID string, eventID int64, recordID int) error {
-	retries := 1
+	retries := 0
 	delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 
 	log.Debug().Str("partition_id", partitionID).Int64("event_id", eventID).Int("record_id", recordID).Msg("POST")
