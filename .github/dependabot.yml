@@ -4,10 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-<<<<<<< Updated upstream
-=======
     allow:
       - dependency-type: "all"
     assignees:
       - "ctdfo"
->>>>>>> Stashed changes
