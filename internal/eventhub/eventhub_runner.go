@@ -19,11 +19,7 @@ func Run() {
 	config := forwarder.InitConfig()
 	eventhub.InitConfig(config)
 
-	checkClient, err := container.NewClientFromConnectionString(
-		config.BlobStorageConnectionString,
-		config.BlobContainerName,
-		nil,
-	)
+	checkClient, err := container.NewClientFromConnectionString(config.BlobStorageConnectionString, config.BlobContainerName, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -61,9 +57,7 @@ func Run() {
 			}
 
 			go func() {
-				log.Debug().
-					Str("partition_id", partitionClient.PartitionID()).
-					Msg("Recieved event pack")
+				log.Debug().Str("partition_id", partitionClient.PartitionID()).Msg("Recieved event pack")
 
 				if err := processEvents(eventhub, partitionClient, rateLimiter); err != nil {
 					panic(err)
@@ -82,11 +76,7 @@ func Run() {
 	}
 }
 
-func processEvents(
-	eventhub HubEventUnpacker,
-	partitionClient *azeventhubs.ProcessorPartitionClient,
-	rateLimiter *rate.Limiter,
-) error {
+func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, rateLimiter *rate.Limiter) error {
 	defer closePartitionResources(partitionClient)
 
 	for {
@@ -101,12 +91,7 @@ func processEvents(
 		log.Debug().Int("event_count", len(events)).Msg("Processing event(s)")
 
 		for _, event := range events {
-			err := eventhub.Process(
-				event.Body,
-				partitionClient.PartitionID(),
-				event.SequenceNumber,
-				rateLimiter,
-			)
+			err := eventhub.Process(event.Body, partitionClient.PartitionID(), event.SequenceNumber, rateLimiter)
 			if err != nil {
 				return err
 			}

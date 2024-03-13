@@ -19,11 +19,7 @@ func (w *WebhookPoster) InitConfig(f *forwarder.ForwarderConfiguration) {
 	w.httpClient = httpclient.NewHttpClientHandler()
 }
 
-func (w *WebhookPoster) PostSyncNoException(
-	url string,
-	contentType string,
-	body string,
-) (*http.Response, error) {
+func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body string) (*http.Response, error) {
 	response, err := w.httpClient.PostAsync(url, contentType, body)
 	if err != nil {
 		return nil, err
@@ -32,28 +28,15 @@ func (w *WebhookPoster) PostSyncNoException(
 	return response, nil
 }
 
-func (w *WebhookPoster) SendPost(
-	auditEventStr string,
-	partitionID string,
-	eventID int64,
-	recordID int,
-) error {
+func (w *WebhookPoster) SendPost(auditEventStr string, partitionID string, eventID int64, recordID int) error {
 	retries := 1
 	delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 
-	log.Debug().
-		Str("partition_id", partitionID).
-		Int64("event_id", eventID).
-		Int("record_id", recordID).
-		Msg("POST")
+	log.Debug().Str("partition_id", partitionID).Int64("event_id", eventID).Int("record_id", recordID).Msg("POST")
 
 	forwarder.IncreaseSent()
 
-	response, err := w.PostSyncNoException(
-		w.forwarderConfiguration.WebSinkURL,
-		"application/json",
-		auditEventStr,
-	)
+	response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
 	if err != nil {
 		return err
 	}
@@ -61,13 +44,7 @@ func (w *WebhookPoster) SendPost(
 	status := response.StatusCode == 200 // OK
 
 	for !status && retries <= w.forwarderConfiguration.PostMaxRetries {
-		log.Error().
-			Str("partition_id", partitionID).
-			Int64("event_id", eventID).
-			Int("record_id", recordID).
-			Int("retries", retries).
-			Int("status_code", response.StatusCode).
-			Msg("POST unseccessful")
+		log.Error().Str("partition_id", partitionID).Int64("event_id", eventID).Int("record_id", recordID).Int("retries", retries).Int("status_code", response.StatusCode).Msg("POST unseccessful")
 
 		retries++
 
@@ -76,11 +53,7 @@ func (w *WebhookPoster) SendPost(
 
 		forwarder.IncreaseRetries()
 
-		response, err := w.PostSyncNoException(
-			w.forwarderConfiguration.WebSinkURL,
-			"application/json",
-			auditEventStr,
-		)
+		response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
 		if err != nil {
 			return err
 		}
@@ -90,13 +63,7 @@ func (w *WebhookPoster) SendPost(
 
 	if status {
 		forwarder.IncreaseSuccesses()
-		log.Debug().
-			Str("partition_id", partitionID).
-			Int64("event_id", eventID).
-			Int("record_id", recordID).
-			Int("retries", retries).
-			Int("status_code", response.StatusCode).
-			Msg("POST successful")
+		log.Debug().Str("partition_id", partitionID).Int64("event_id", eventID).Int("record_id", recordID).Int("retries", retries).Int("status_code", response.StatusCode).Msg("POST successful")
 		return nil
 	} else {
 		forwarder.IncreaseErrors()
