@@ -2,16 +2,14 @@ package eventhub
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
-	"fmt"
 	"time"
-	"unsafe"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/container"
 	"github.com/jemag/aks-audit-log-go/internal/forwarder"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/time/rate"
 )
 
@@ -41,12 +39,7 @@ func Run() {
 		panic(err)
 	}
 
-	defer func() {
-		if cerr := consumerClient.Close(context.TODO()); cerr != nil {
-			// Handle the error, you can log it or take appropriate action
-			fmt.Printf("Error closing consumer client: %v\n", cerr)
-		}
-	}()
+	defer consumerClient.Close(context.TODO())
 
 	processor, err := azeventhubs.NewProcessor(consumerClient, checkpointStore, nil)
 	if err != nil {
@@ -64,18 +57,9 @@ func Run() {
 			}
 
 			go func() {
-				randomName, err := generate(8)
-				if err != nil {
-					// Handle the error, you can log it or take appropriate action
-					fmt.Printf("Error generating random name: %v\n", err)
-					return
-				}
+				log.Debug().Str("partition_id", partitionClient.PartitionID()).Msg("Recieved event pack")
 
-				if config.VerboseLevel > 1 {
-					fmt.Printf("{%q} > Recieved event pack\n", randomName)
-				}
-
-				if err := processEvents(eventhub, partitionClient, randomName, rateLimiter); err != nil {
+				if err := processEvents(eventhub, partitionClient, rateLimiter); err != nil {
 					panic(err)
 				}
 			}()
@@ -92,7 +76,7 @@ func Run() {
 	}
 }
 
-func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, randomName string, rateLimiter *rate.Limiter) error {
+func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, rateLimiter *rate.Limiter) error {
 	defer closePartitionResources(partitionClient)
 
 	for {
@@ -104,10 +88,10 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 			return err
 		}
 
-		fmt.Printf("Processing %d event(s)\n", len(events))
+		log.Debug().Int("event_count", len(events)).Msg("Processing event(s)")
 
 		for _, event := range events {
-			err := eventhub.Process(event.Body, randomName, rateLimiter)
+			err := eventhub.Process(event.Body, partitionClient.PartitionID(), event.SequenceNumber, rateLimiter)
 			if err != nil {
 				return err
 			}
@@ -120,25 +104,5 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 }
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
-	defer func() {
-		if err := partitionClient.Close(context.TODO()); err != nil {
-			// Handle the error, you can log it or take appropriate action
-			fmt.Printf("Error closing partition client: %v\n", err)
-		}
-	}()
-}
-
-func generate(size int) (string, error) {
-	alphabet := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-	b := make([]byte, size)
-	_, err := rand.Read(b)
-	if err != nil {
-		return "", err
-	}
-	for i := 0; i < size; i++ {
-		b[i] = alphabet[b[i]%byte(len(alphabet))]
-	}
-
-	return *(*string)(unsafe.Pointer(&b)), nil
+	defer partitionClient.Close(context.TODO())
 }
