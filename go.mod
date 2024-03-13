@@ -8,7 +8,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs v1.0.4
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.3.1
 	github.com/prometheus/client_golang v1.19.0
-	github.com/rs/zerolog v1.31.0
+	github.com/rs/zerolog v1.32.0
 	golang.org/x/time v0.5.0
 )
 
