@@ -11,8 +11,8 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ${{ ('ubuntu-latest' }}
-    timeout-minutes: ${{ 360 }}
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 360
     permissions:
       security-events: write
 
