@@ -3,4 +3,3 @@ extends: default
 
 rules:
   line-length: disable
-  document-starts: disable
