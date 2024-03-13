@@ -2,10 +2,8 @@ package eventhub
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
 	"time"
-	"unsafe"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
@@ -59,15 +57,9 @@ func Run() {
 			}
 
 			go func() {
-				randomName, err := generate(8)
-				if err != nil {
-					log.Error().Msgf("Error generating random name: %v", err)
-					return
-				}
+				log.Debug().Str("partition_id", partitionClient.PartitionID()).Msg("Recieved event pack")
 
-				log.Debug().Msgf("{%v} > Recieved event pack", randomName)
-
-				if err := processEvents(eventhub, partitionClient, randomName, rateLimiter); err != nil {
+				if err := processEvents(eventhub, partitionClient, rateLimiter); err != nil {
 					panic(err)
 				}
 			}()
@@ -84,7 +76,7 @@ func Run() {
 	}
 }
 
-func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, randomName string, rateLimiter *rate.Limiter) error {
+func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.ProcessorPartitionClient, rateLimiter *rate.Limiter) error {
 	defer closePartitionResources(partitionClient)
 
 	for {
@@ -96,10 +88,10 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 			return err
 		}
 
-		log.Debug().Msgf("Processing %d event(s)", len(events))
+		log.Debug().Int("event_count", len(events)).Msg("Processing event(s)")
 
 		for _, event := range events {
-			err := eventhub.Process(event.Body, randomName, rateLimiter)
+			err := eventhub.Process(event.Body, partitionClient.PartitionID(), event.SequenceNumber, rateLimiter)
 			if err != nil {
 				return err
 			}
@@ -113,19 +105,4 @@ func processEvents(eventhub HubEventUnpacker, partitionClient *azeventhubs.Proce
 
 func closePartitionResources(partitionClient *azeventhubs.ProcessorPartitionClient) {
 	defer partitionClient.Close(context.TODO())
-}
-
-func generate(size int) (string, error) {
-	alphabet := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-	b := make([]byte, size)
-	_, err := rand.Read(b)
-	if err != nil {
-		return "", err
-	}
-	for i := 0; i < size; i++ {
-		b[i] = alphabet[b[i]%byte(len(alphabet))]
-	}
-
-	return *(*string)(unsafe.Pointer(&b)), nil
 }

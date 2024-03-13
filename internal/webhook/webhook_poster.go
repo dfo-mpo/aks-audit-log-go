@@ -28,11 +28,11 @@ func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body
 	return response, nil
 }
 
-func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eventNumber int) error {
+func (w *WebhookPoster) SendPost(auditEventStr string, partitionID string, eventID int64, recordID int) error {
 	retries := 1
 	delay := w.forwarderConfiguration.PostRetryIncrementalDelay
 
-	log.Debug().Msgf("%s %d > POST", mainEventName, eventNumber)
+	log.Debug().Str("partition_id", partitionID).Int64("event_id", eventID).Int("record_id", recordID).Msg("POST")
 
 	forwarder.IncreaseSent()
 
@@ -44,13 +44,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 	status := response.StatusCode == 200 // OK
 
 	for !status && retries <= w.forwarderConfiguration.PostMaxRetries {
-		log.Error().Msgf(
-			"%s %d > **Error sending POST, retry %d, result: [%d]",
-			mainEventName,
-			eventNumber,
-			retries,
-			response.StatusCode,
-		)
+		log.Error().Str("partition_id", partitionID).Int64("event_id", eventID).Int("record_id", recordID).Int("retries", retries).Int("status_code", response.StatusCode).Msg("POST unseccessful")
 
 		retries++
 
@@ -69,13 +63,11 @@ func (w *WebhookPoster) SendPost(auditEventStr string, mainEventName string, eve
 
 	if status {
 		forwarder.IncreaseSuccesses()
-		log.Debug().Msgf("%s %d > Post response [%d]", mainEventName, eventNumber, response.StatusCode)
-
+		log.Debug().Str("partition_id", partitionID).Int64("event_id", eventID).Int("record_id", recordID).Int("retries", retries).Int("status_code", response.StatusCode).Msg("POST successful")
 		return nil
 	} else {
 		forwarder.IncreaseErrors()
-		log.Error().Msgf("%s %d > **Error post response after max retries, gave up: [%d]", mainEventName, eventNumber, response.StatusCode)
-
+		log.Error().Str("partition_id", partitionID).Int64("event_id", eventID).Int("record_id", recordID).Int("retries", retries).Int("status_code", response.StatusCode).Msg("POST unsuccessful, max retries")
 		return err
 	}
 }

@@ -29,7 +29,7 @@ type Event struct {
 	} `json:"records"`
 }
 
-func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string, rateLimiter *rate.Limiter) error {
+func (h HubEventUnpacker) Process(eventJObj []byte, partitionID string, eventID int64, rateLimiter *rate.Limiter) error {
 	var event Event
 	err := json.Unmarshal(eventJObj, &event)
 	if err != nil {
@@ -45,9 +45,9 @@ func (h HubEventUnpacker) Process(eventJObj []byte, mainEventName string, rateLi
 
 		auditEventStr := record.Properties.Log
 
-		log.Debug().Msgf("%s %d > READ audit event: %s", mainEventName, i, auditEventStr)
+		log.Debug().Str("partition_id", partitionID).Int64("event_id", eventID).Int("record_id", i).Msgf("%v", record)
 
-		err = h.webhookPoster.SendPost(auditEventStr, mainEventName, i)
+		err = h.webhookPoster.SendPost(auditEventStr, partitionID, eventID, i)
 		if err != nil {
 			return err
 		}
