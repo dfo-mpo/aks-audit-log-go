@@ -80,6 +80,14 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 		f.RateLimiterBurst = rateLimiterBurst
 	}
 
-	log.Info().Str("EventHubName", f.EventHubName).Str("BlobContainerName", f.BlobContainerName).Str("WebSinkURL", f.WebSinkURL).Int("PostMaxRetries", f.PostMaxRetries).Int("PostRetryIncrementalDelay", f.PostRetryIncrementalDelay).Float64("RateLimiter", f.RateLimiter).Int("RateLimiterBurst", f.RateLimiterBurst).Msg("Configuration set")
+	log.Info().
+		Str("EventHubName", f.EventHubName).
+		Str("BlobContainerName", f.BlobContainerName).
+		Str("WebSinkURL", f.WebSinkURL).
+		Int("PostMaxRetries", f.PostMaxRetries).
+		Int("PostRetryIncrementalDelay", f.PostRetryIncrementalDelay).
+		Float64("RateLimiter", f.RateLimiter).
+		Int("RateLimiterBurst", f.RateLimiterBurst).
+		Msg("Configuration set")
 	return f
 }
