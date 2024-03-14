@@ -27,9 +27,22 @@ func TestUnmarshallEvent_AbnormalJSONInput(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestUnmarshallEvent_IncorrectJSONInput(t *testing.T) {
+	// JSON with missing closing quotation mark for value
+	jsonInput := []byte(`{"records": [{"properties": {"log": "missing closing quotation mark}}]}`)
+
+	var event Event
+
+	err := UnmarshallEvent(jsonInput, &event)
+
+	assert.NotNil(t, err)
+}
+
 func TestUnmarshallEvent_ExtraJSONInput(t *testing.T) {
 	// JSON with extra property
-	jsonInput := []byte(`{"records": [{"properties": {"log": "normal log entry"}, "extra": "additional property"}]}`)
+	jsonInput := []byte(
+		`{"records": [{"properties": {"log": "normal log entry"}, "extra": "additional property"}]}`,
+	)
 
 	var event Event
 
