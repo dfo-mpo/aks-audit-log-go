@@ -22,7 +22,7 @@ func TestUnmarshallEvent_MissingSubpropertyJSONInput_ValidBehavior(t *testing.T)
 	assert.Nil(t, err)
 }
 
-func TestUnmarshallEvent_MissingEndQuoteJSONInput_ValidBehavior(t *testing.T) {
+func TestUnmarshallEvent_MissingEndQuoteJSONInput_ErrorExpected(t *testing.T) {
 	jsonInput := []byte(`{"records": [{"properties": {"log": "missing closing quotation mark}}]}`)
 
 	err, _ := UnmarshallEvent(jsonInput)
