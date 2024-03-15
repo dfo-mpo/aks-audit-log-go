@@ -6,47 +6,36 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUnmarshallEvent_NormalJSONInput(t *testing.T) {
+func TestUnmarshallEvent_NormalJSONInput_ValidBehavior(t *testing.T) {
 	jsonInput := []byte(`{"records": [{"properties": {"log": "normal log entry"}}]}`)
 
-	var event Event
-
-	err := UnmarshallEvent(jsonInput, &event)
+	err, _ := UnmarshallEvent(jsonInput)
 
 	assert.Nil(t, err)
 }
 
-func TestUnmarshallEvent_AbnormalJSONInput(t *testing.T) {
-	// JSON with missing subproperty
+func TestUnmarshallEvent_MissingSubpropertyJSONInput_ValidBehavior(t *testing.T) {
 	jsonInput := []byte(`{"records": [{"properties": {}}]}`)
 
-	var event Event
-
-	err := UnmarshallEvent(jsonInput, &event)
+	err, _ := UnmarshallEvent(jsonInput)
 
 	assert.Nil(t, err)
 }
 
-func TestUnmarshallEvent_IncorrectJSONInput(t *testing.T) {
-	// JSON with missing closing quotation mark for value
+func TestUnmarshallEvent_MissingEndQuoteJSONInput_ValidBehavior(t *testing.T) {
 	jsonInput := []byte(`{"records": [{"properties": {"log": "missing closing quotation mark}}]}`)
 
-	var event Event
-
-	err := UnmarshallEvent(jsonInput, &event)
+	err, _ := UnmarshallEvent(jsonInput)
 
 	assert.NotNil(t, err)
 }
 
-func TestUnmarshallEvent_ExtraJSONInput(t *testing.T) {
-	// JSON with extra property
+func TestUnmarshallEvent_ExtraPropertyJSONInput_ValidBehavior(t *testing.T) {
 	jsonInput := []byte(
 		`{"records": [{"properties": {"log": "normal log entry"}, "extra": "additional property"}]}`,
 	)
 
-	var event Event
-
-	err := UnmarshallEvent(jsonInput, &event)
+	err, _ := UnmarshallEvent(jsonInput)
 
 	assert.Nil(t, err)
 }
