@@ -1,6 +1,6 @@
 # AKS audit log integration with Falco
 
-This program is a golang version of the following program: https://github.com/sysdiglabs/aks-audit-log. Falco runtime security tool can also detect events for Kubernetes commands. To do so, access to the Kubernetee audit logs is required to get visibility into events in the cluster. The purpose of **aks-audit-log-go** is to receive the audit logs and forward them to Falco in order to produce alerts.
+This program is a Go version of the following program: https://github.com/sysdiglabs/aks-audit-log. The purpose of **aks-audit-log-go** is to receive Kubernetes audit logs and forward them to Falco runtime security tool that can do detections based on runtime security rules for Kubernetes API calls (using the [k8s-audit plugin](https://github.com/falcosecurity/plugins/tree/master/plugins/k8saudit)).
 
 ## Architecture
 
