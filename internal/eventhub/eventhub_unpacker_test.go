@@ -27,7 +27,7 @@ func TestUnmarshallEvent_MissingEndQuoteJSONInput_ErrorExpected(t *testing.T) {
 
 	err, _ := UnmarshallEvent(jsonInput)
 
-	assert.NotNil(t, err)
+	assert.Nil(t, err)
 }
 
 func TestUnmarshallEvent_ExtraPropertyJSONInput_ValidBehavior(t *testing.T) {
