@@ -12,7 +12,7 @@ There are four packages: main, httpclient, forwarder and eventhub.
 
 ### forwarder package
 
-This package does two things: (1) it sets the configurations using the environment variables and (2) starts a server to maintain statistics.
+This package does two things: (1) it sets the configurations using the environment variables and (2) starts a server to maintain Prometheus statistics.
 
 ### eventhub package
 
