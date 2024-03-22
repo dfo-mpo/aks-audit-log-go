@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/jemag/aks-audit-log-go/internal/forwarder"
-	"github.com/jemag/aks-audit-log-go/internal/httpclient"
+	"github.com/dfo-mpo/aks-audit-log-go/internal/forwarder"
+	"github.com/dfo-mpo/aks-audit-log-go/internal/httpclient"
 	"github.com/rs/zerolog/log"
 )
 

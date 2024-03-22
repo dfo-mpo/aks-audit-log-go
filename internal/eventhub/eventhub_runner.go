@@ -8,7 +8,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs"
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/checkpoints"
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/container"
-	"github.com/jemag/aks-audit-log-go/internal/forwarder"
+	"github.com/dfo-mpo/aks-audit-log-go/internal/forwarder"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/time/rate"
 )
