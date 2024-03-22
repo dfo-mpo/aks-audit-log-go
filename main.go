@@ -4,8 +4,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jemag/aks-audit-log-go/internal/eventhub"
-	"github.com/jemag/aks-audit-log-go/internal/forwarder"
+	"github.com/dfo-mpo/aks-audit-log-go/internal/eventhub"
+	"github.com/dfo-mpo/aks-audit-log-go/internal/forwarder"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -31,15 +31,13 @@ func main() {
 	}
 	zerolog.SetGlobalLevel(logLevel)
 
-	log.Debug().Msg("AKS Kuberenetes audit log forwarder from Event Hubs to Agent")
+	log.Debug().Msg("AKS Kubernetes audit log forwarder from Event Hubs to Agent")
 
 	log.Debug().Msg("Starting Prometheus statistics")
 
 	log.Debug().Msg("Starting Server")
 
 	go forwarder.InitServer()
-
-	log.Debug().Msg("Testing")
 
 	eventhub.Run()
 

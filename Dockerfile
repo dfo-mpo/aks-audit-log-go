@@ -27,7 +27,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o 
 #  ╰──────────────────────────────────────────────────────────╯
 FROM scratch
 
-LABEL org.opencontainers.image.source="https://github.com/jemag/aks-audit-log-go"
+LABEL org.opencontainers.image.source="https://github.com/dfo-mpo/aks-audit-log-go"
 LABEL org.opencontainers.image.description="Forward AKS audit logs to falco"
 LABEL maintainer="Alexandre.Brassard-Desjardins@dfo-mpo.gc.ca"
 
