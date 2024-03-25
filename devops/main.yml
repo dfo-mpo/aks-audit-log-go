@@ -39,6 +39,18 @@ stages:
     jobs:
       - template: pipelines/jobs/trivy-secret-scan.yaml@templates
 
+  - stage: CodeScan
+    displayName: Code Scan
+    dependsOn:
+    jobs:
+      - job: gosec
+        displayName: gosec security scanning
+        steps:
+          - script: |
+              curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s v2.19.0
+              PATH=$PATH:$(pwd)/bin
+              gosec -sort ./...
+
   - stage: Lint
     displayName: Lint
     dependsOn:
