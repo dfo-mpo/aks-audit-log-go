@@ -4,7 +4,7 @@ This program is a Go version of the following program: https://github.com/sysdig
 
 ## Architecture
 
-![Architecture](https://github.com/opencost/opencost-helm-chart/assets/20731423/d0272650-1336-46c1-9600-4dbb76ab29d2)
+![Architecture](https://github.com/dfo-mpo/aks-audit-log-go/assets/20731423/3f1fdd1f-525e-435a-9fbd-0675134c17bd)
 
 ## How program works
 
