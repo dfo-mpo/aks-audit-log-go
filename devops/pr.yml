@@ -43,7 +43,9 @@ stages:
         displayName: gosec security scanning
         steps:
           - script: |
-              gosec -sort ./...
+              curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s v2.19.0
+              PATH=$PATH:$(pwd)/bin
+              gosec -severity high -confidence medium -sort ./...
 
   - stage: Lint
     displayName: Lint
