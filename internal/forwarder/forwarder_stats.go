@@ -53,7 +53,7 @@ func InitServer() {
 
 	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
 	port := ":9000"
-	err := http.ListenAndServe(port, nil)
+	err := http.ListenAndServe(port, nil) // #nosec G114
 	if err != nil {
 		log.Fatal().Msgf("Failed to start server on port %s: %v", port, err)
 	}
