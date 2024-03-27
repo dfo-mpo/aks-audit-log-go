@@ -8,7 +8,7 @@ resources:
   repositories:
     - repository: templates
       type: git
-      name: ASK/Automation
+      name: AKS/Automation
 trigger: none
 
 pr:
