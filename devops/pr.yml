@@ -43,9 +43,12 @@ stages:
         displayName: gosec security scanning
         steps:
           - script: |
+              curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s v2.19.0
+              PATH=$PATH:$(pwd)/bin
               gosec -sort -no-fail -show-ignored -terse -r
             displayName: All issues
           - script: |
+              PATH=$PATH:$(pwd)/bin
               gosec -severity medium -confidence medium -quiet -r
             displayName: Failing issues
 
