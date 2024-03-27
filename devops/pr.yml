@@ -35,6 +35,20 @@ stages:
     jobs:
       - template: pipelines/jobs/trivy-secret-scan.yaml@templates
 
+  - stage: CodeScan
+    displayName: Code Scan
+    dependsOn:
+    jobs:
+      - job: gosec
+        displayName: gosec security scanning
+        steps:
+          - script: |
+              gosec -sort -no-fail -show-ignored -terse -r
+            displayName: All issues
+          - script: |
+              gosec -severity medium -confidence medium -quiet -r
+            displayName: Failing issues
+
   - stage: Lint
     displayName: Lint
     dependsOn:
@@ -75,6 +89,7 @@ stages:
     dependsOn:
       - UnitTest
       - SecretScan
+      - CodeScan
       - Lint
     jobs:
       - template: pipelines/jobs/image-buildkit-local-push.yaml@templates
