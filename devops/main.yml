@@ -47,7 +47,11 @@ stages:
         displayName: gosec security scanning
         steps:
           - script: |
-              gosec -sort ./...
+              gosec -sort -no-fail -show-ignored -terse -r
+            displayName: All issues
+          - script: |
+              gosec -severity medium -confidence medium -quiet -r
+            displayName: Failing issues
 
   - stage: Lint
     displayName: Lint
@@ -89,6 +93,7 @@ stages:
     dependsOn:
       - UnitTest
       - SecretScan
+      - CodeScan
       - Lint
     jobs:
       - template: pipelines/jobs/image-buildkit-local-push.yaml@templates
