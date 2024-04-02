@@ -81,7 +81,7 @@ stages:
         steps:
           - script: |
               set -eo pipefail
-              golangci-lint run
+              golangci-lint run --timeout=5m
             displayName: "Run GoLintCLI."
 
   - stage: Build
