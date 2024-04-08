@@ -9,6 +9,7 @@ resources:
     - repository: templates
       type: git
       name: AKS/Automation
+      ref: refs/tags/pipelines-1.0.0
 trigger: none
 
 pr:
