@@ -13,6 +13,7 @@ resources:
     - repository: templates
       type: git
       name: AKS/Automation
+      ref: refs/tags/pipelines-1.0.0
 
 variables:
   - group: global
@@ -38,6 +39,20 @@ stages:
     dependsOn:
     jobs:
       - template: pipelines/jobs/trivy-secret-scan.yaml@templates
+
+  - stage: CodeScan
+    displayName: Code Scan
+    dependsOn:
+    jobs:
+      - job: gosec
+        displayName: gosec security scanning
+        steps:
+          - script: |
+              gosec -sort -no-fail -show-ignored -terse -r
+            displayName: All issues
+          - script: |
+              gosec -severity medium -confidence medium -quiet -r
+            displayName: Failing issues
 
   - stage: Lint
     displayName: Lint
@@ -71,7 +86,7 @@ stages:
         steps:
           - script: |
               set -eo pipefail
-              golangci-lint run
+              golangci-lint run --timeout=5m
             displayName: "Run GoLintCLI."
 
   - stage: Build
@@ -79,6 +94,7 @@ stages:
     dependsOn:
       - UnitTest
       - SecretScan
+      - CodeScan
       - Lint
     jobs:
       - template: pipelines/jobs/image-buildkit-local-push.yaml@templates

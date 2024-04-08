@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/jemag/aks-audit-log-go/internal/forwarder"
-	"github.com/jemag/aks-audit-log-go/internal/webhook"
+	"github.com/dfo-mpo/aks-audit-log-go/internal/forwarder"
+	"github.com/dfo-mpo/aks-audit-log-go/internal/webhook"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/time/rate"
 )
