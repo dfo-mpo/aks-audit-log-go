@@ -20,7 +20,7 @@ require (
 require (
 	github.com/Azure/go-amqp v1.0.5 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
