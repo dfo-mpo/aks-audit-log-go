@@ -1,6 +1,7 @@
 package forwarder
 
 import (
+	"math"
 	"os"
 	"strconv"
 
@@ -67,7 +68,7 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 	rateLimiterENV := os.Getenv("RATELIMITEREVENTSPERSECONDS")
 	rateLimiter, err := strconv.ParseFloat(rateLimiterENV, 64)
 	if rateLimiterENV == "" || err != nil {
-		f.RateLimiter = 10
+		f.RateLimiter = math.MaxFloat64
 	} else {
 		f.RateLimiter = rateLimiter
 	}
