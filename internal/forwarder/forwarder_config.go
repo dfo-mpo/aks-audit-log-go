@@ -68,7 +68,7 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 	rateLimiterENV := os.Getenv("RATELIMITEREVENTSPERSECONDS")
 	rateLimiter, err := strconv.ParseFloat(rateLimiterENV, 64)
 	if rateLimiterENV == "" || err != nil {
-		f.RateLimiter = math.MaxFloat64
+		f.RateLimiter = math.Inf(1)
 	} else {
 		f.RateLimiter = rateLimiter
 	}
