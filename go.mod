@@ -11,6 +11,7 @@ require (
 	github.com/rs/zerolog v1.32.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/time v0.5.0
+	golang.org/x/net/http v1.22.2
 )
 
 require (
