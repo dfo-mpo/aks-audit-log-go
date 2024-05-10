@@ -13,7 +13,7 @@ require (
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.11.1 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/internal v1.7.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/internal v1.8.0 // indirect
 )
 
 require (
