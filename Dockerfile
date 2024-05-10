@@ -2,11 +2,8 @@
 #  ╭──────────────────────────────────────────────────────────╮
 #  │                       build stage                        │
 #  ╰──────────────────────────────────────────────────────────╯
-<<<<<<< Updated upstream
-FROM golang:1.22.0-alpine3.19@sha256:8e96e6cff6a388c2f70f5f662b64120941fcd7d4b89d62fec87520323a316bd9 as build
-=======
-FROM golang:1.22.2-alpine3.19@sha256:2a882244fb51835ebbd8313bffee83775b0c076aaf56b497b43d8a4c72db65e1 as build
->>>>>>> Stashed changes
+
+FROM golang:1.22.3-alpine3.19@sha256:2a882244fb51835ebbd8313bffee83775b0c076aaf56b497b43d8a4c72db65e1 as build
 
 # Install necessary packages
 RUN apk update && \
