@@ -1,6 +1,6 @@
 module github.com/dfo-mpo/aks-audit-log-go
 
-go 1.22.2
+go 1.22.3
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs v1.2.0
