@@ -3,7 +3,7 @@ module github.com/dfo-mpo/aks-audit-log-go
 go 1.22.3
 
 require (
-	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs v1.2.0
+	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs v1.2.1
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.3.2
 	github.com/prometheus/client_golang v1.19.1
 	github.com/rs/zerolog v1.32.0
