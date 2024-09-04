@@ -97,10 +97,19 @@ stages:
       - CodeScan
       - Lint
     jobs:
-      - template: pipelines/jobs/image-buildkit-local-push.yaml@templates
-        parameters:
-          registryUsername: $(iwls-acr-username)
-          registryPassword: $(iwls-acr-password)
-          registryRepo: $(registry-repo)
-          fullImage: $(full-image)
-          pushImage: true
+      - job: BuildImage
+        displayName: Build & Scan Image
+        steps:
+          - template: pipelines/tasks/image-buildkit-local-build.yaml@templates
+          - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
+            parameters:
+              username: $(iwls-acr-username)
+              password: $(iwls-acr-password)
+              repo: iwlsacr.azurecr.io
+              fullImage: iwlsacr.azurecr.io/aks-audit-log-go:$(Build.BuildNumber)
+          - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
+            parameters:
+              username: $(aps-acr-username)
+              password: $(aps-acr-password)
+              repo: apscommonacr.azurecr.io
+              fullImage: apscommonacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
