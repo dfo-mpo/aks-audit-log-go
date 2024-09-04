@@ -2,7 +2,7 @@
 name: $(Date:yyyyMMdd)$(Rev:.r)
 
 pool:
-  name: cloud-team-aks
+  name: cloud-team-aks-sc2g
 
 trigger:
   branches:
