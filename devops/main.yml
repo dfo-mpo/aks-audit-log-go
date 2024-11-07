@@ -18,7 +18,7 @@ resources:
 variables:
   - group: global
   - name: full-image
-    value: apscommonacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
+    value: iwlsacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
   - name: registry-repo
     value: apscommonacr.azurecr.io
 
@@ -98,12 +98,14 @@ stages:
       - Lint
     jobs:
       - job: BuildImage
-        displayName: Build, Scan & Push Image
+        displayName: Build & Push Image
         steps:
-          - template: pipelines/jobs/image-buildkit-local-push.yaml@templates
+          - template: pipelines/tasks/image-buildkit-local-build.yaml@templates
+          - template: pipelines/tasks/skopeo-login-registry.yaml@templates
             parameters:
-              registryUsername: $(aps-acr-username)
-              registryPassword: $(aps-acr-password)
-              registryRepo: $(registry-repo)
+              username: $(aps-acr-username)
+              password: $(aps-acr-password)
+              repo: $(registry-repo)
+          - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
+            parameters:
               fullImage: $(full-image)
-              pushImages: true
