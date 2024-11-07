@@ -98,18 +98,11 @@ stages:
       - Lint
     jobs:
       - job: BuildImage
-        displayName: Build & Scan Image
+        displayName: Build, Scan & Push Image
         steps:
-          - template: pipelines/tasks/image-buildkit-local-build.yaml@templates
-          - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
+          - template: pipelines/tasks/image-buildkit-local-push.yaml@templates
             parameters:
               registryUsername: $(aps-acr-username)
               registryPassword: $(aps-acr-password)
               registryRepo: $(registry-repo)
               fullImage: iwlsacr.azurecr.io/aks-audit-log-go:$(Build.BuildNumber)
-          - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
-            parameters:
-              username: $(aps-acr-username)
-              password: $(aps-acr-password)
-              repo: apscommonacr.azurecr.io
-              fullImage: apscommonacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
