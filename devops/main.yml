@@ -20,7 +20,7 @@ variables:
   - name: full-image
     value: iwlsacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
   - name: registry-repo
-    value: iwlsacr.azurecr.io
+    value: apscommonacr.azurecr.io
 
 stages:
   - stage: UnitTest
@@ -103,9 +103,9 @@ stages:
           - template: pipelines/tasks/image-buildkit-local-build.yaml@templates
           - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
             parameters:
-              username: $(iwls-acr-username)
-              password: $(iwls-acr-password)
-              repo: iwlsacr.azurecr.io
+              registryUsername: $(aps-acr-username)
+              registryPassword: $(aps-acr-password)
+              registryRepo: $(registry-repo)
               fullImage: iwlsacr.azurecr.io/aks-audit-log-go:$(Build.BuildNumber)
           - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
             parameters:
