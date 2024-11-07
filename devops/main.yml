@@ -100,7 +100,7 @@ stages:
       - job: BuildImage
         displayName: Build, Scan & Push Image
         steps:
-          - template: pipelines/tasks/image-buildkit-local-push.yaml@templates
+          - template: pipelines/jobs/image-buildkit-local-push.yaml@templates
             parameters:
               registryUsername: $(aps-acr-username)
               registryPassword: $(aps-acr-password)
