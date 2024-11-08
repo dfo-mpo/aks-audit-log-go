@@ -9,7 +9,7 @@ resources:
     - repository: templates
       type: git
       name: AKS/Automation
-      ref: refs/tags/pipelines-1.0.0
+      ref: refs/tags/pipelines-1.2.1
 trigger: none
 
 pr:
@@ -17,6 +17,8 @@ pr:
 
 variables:
   - group: global
+  - name: registry-repo
+    value: apscommonacr.azurecr.io
 
 stages:
   - stage: UnitTest
@@ -94,3 +96,7 @@ stages:
       - Lint
     jobs:
       - template: pipelines/jobs/image-buildkit-local-push.yaml@templates
+        parameters:
+          registryUsername: $(aps-acr-username)
+          registryPassword: $(aps-acr-password)
+          registryRepo: $(registry-repo)
