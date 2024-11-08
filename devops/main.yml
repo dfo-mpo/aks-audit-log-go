@@ -13,14 +13,14 @@ resources:
     - repository: templates
       type: git
       name: AKS/Automation
-      ref: refs/tags/pipelines-1.0.0
+      ref: refs/tags/pipelines-1.2.1
 
 variables:
   - group: global
   - name: full-image
-    value: iwlsacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
+    value: apscommonacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
   - name: registry-repo
-    value: iwlsacr.azurecr.io
+    value: apscommonacr.azurecr.io
 
 stages:
   - stage: UnitTest
@@ -98,18 +98,14 @@ stages:
       - Lint
     jobs:
       - job: BuildImage
-        displayName: Build & Scan Image
+        displayName: Build & Push Image
         steps:
           - template: pipelines/tasks/image-buildkit-local-build.yaml@templates
-          - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
-            parameters:
-              username: $(iwls-acr-username)
-              password: $(iwls-acr-password)
-              repo: iwlsacr.azurecr.io
-              fullImage: iwlsacr.azurecr.io/aks-audit-log-go:$(Build.BuildNumber)
-          - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
+          - template: pipelines/tasks/skopeo-login-registry.yaml@templates
             parameters:
               username: $(aps-acr-username)
               password: $(aps-acr-password)
-              repo: apscommonacr.azurecr.io
-              fullImage: apscommonacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
+              repo: $(registry-repo)
+          - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
+            parameters:
+              fullImage: $(full-image)
