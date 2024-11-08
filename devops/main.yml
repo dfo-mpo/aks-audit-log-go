@@ -18,7 +18,7 @@ resources:
 variables:
   - group: global
   - name: full-image
-    value: iwlsacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
+    value: apscommonacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
   - name: registry-repo
     value: apscommonacr.azurecr.io
 
