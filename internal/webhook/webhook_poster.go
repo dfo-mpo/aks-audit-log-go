@@ -25,6 +25,8 @@ func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body
 		return nil, err
 	}
 
+	defer response.Body.Close()
+
 	return response, nil
 }
 
