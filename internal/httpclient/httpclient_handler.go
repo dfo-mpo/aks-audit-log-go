@@ -10,7 +10,12 @@ type HttpClientHandler struct {
 }
 
 func NewHttpClientHandler() *HttpClientHandler {
-	return &HttpClientHandler{client: &http.Client{}}
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	t.DisableKeepAlives = true
+	
+	return &HttpClientHandler{
+		client: &http.Client{Transport: t},
+	}
 }
 
 func (h *HttpClientHandler) PostAsync(url string, contentType string, body string) (*http.Response, error) {
