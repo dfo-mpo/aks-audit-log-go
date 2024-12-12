@@ -9,9 +9,9 @@ type HttpClientHandler struct {
 	client *http.Client
 }
 
-func NewHttpClientHandler() *HttpClientHandler {
+func NewHttpClientHandler(keepAlive bool) *HttpClientHandler {
 	t := http.DefaultTransport.(*http.Transport).Clone()
-	t.DisableKeepAlives = true
+	t.DisableKeepAlives = !keepAlive
 	
 	return &HttpClientHandler{
 		client: &http.Client{Transport: t},
