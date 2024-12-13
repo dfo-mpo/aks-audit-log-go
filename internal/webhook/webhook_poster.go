@@ -16,13 +16,17 @@ type WebhookPoster struct {
 
 func (w *WebhookPoster) InitConfig(f *forwarder.ForwarderConfiguration) {
 	w.forwarderConfiguration = f
-	w.httpClient = httpclient.NewHttpClientHandler()
+	w.httpClient = httpclient.NewHttpClientHandler(w.forwarderConfiguration.KeepAlive)
 }
 
-func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body string) (*http.Response, error) {
+func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body string, keepAlive bool) (*http.Response, error) {
 	response, err := w.httpClient.PostAsync(url, contentType, body)
 	if err != nil {
 		return nil, err
+	}
+
+	if !keepAlive {
+		defer response.Body.Close()
 	}
 
 	return response, nil
@@ -36,7 +40,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, partitionID string, event
 
 	forwarder.IncreaseSent()
 
-	response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
+	response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr, w.forwarderConfiguration.KeepAlive)
 	if err != nil {
 		return err
 	}
@@ -53,7 +57,7 @@ func (w *WebhookPoster) SendPost(auditEventStr string, partitionID string, event
 
 		forwarder.IncreaseRetries()
 
-		response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr)
+		response, err := w.PostSyncNoException(w.forwarderConfiguration.WebSinkURL, "application/json", auditEventStr, w.forwarderConfiguration.KeepAlive)
 		if err != nil {
 			return err
 		}

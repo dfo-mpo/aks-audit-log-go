@@ -32,11 +32,51 @@ This package sends the http POST request to the Falco pod (with k8s-audit plugin
 
 There is a `.envrc.example` file that contains the environment variables to be configured. You can save a copy as `.envrc` and then source it using `source .envrc` to load the environment variables into your shell session.
 
-**Note:** `POSTMAXRETRIES`, `POSTRETRYINCREMENTALDELAY` and `LOGLEVEL` are optional variables. They will default to 5 for `POSTMAXRETRIES`, 1000 for `POSTRETRYINCREMENTALDELAY` and "info" for `LOGLEVEL`.
+**Note:** `POSTMAXRETRIES`, `POSTRETRYINCREMENTALDELAY`, `LOGLEVEL` and `KEEPALIVE` are optional variables. They will default to 5 for `POSTMAXRETRIES`, 1000 for `POSTRETRYINCREMENTALDELAY`, "info" for `LOGLEVEL` and false for `KEEPALIVE`.
 
-### Log level
+#### EventHub connection string
 
-The `LOGLEVEL` environment variable sets what is sent to its log. The following log levels are allowed (from higest to lowest): `panic`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`.
+The `EHUBNAMESPACECONNECTIONSTRING` environment variable sets the EventHub connection string.
+
+#### EventHub name
+
+The `EVENTHUBNAME` environment variable sets the EventHub name.
+
+#### Blob storage connection string
+
+The `BLOBSTORAGECONNECTIONSTRING` environment variable sets the Blob storage connection string.
+
+#### Blob container name
+
+The `BLOBCONTAINERNAME` environment variable sets the Blob container name.
+
+#### Webhook URL
+
+The `WEBSINKURL` environment variable sets the webhook URL for the Falco pod (with k8s-audit plugin) pod. For example, `http://localhost:8765/k8s-audit`.
+
+#### Maximum retries
+
+The `POSTMAXRETRIES` environment variable sets the maximum number of retries for the POST request to the Falco pod (with k8s-audit plugin) pod.
+
+#### Retry incremental delay
+
+The `POSTRETRYINCREMENTALDELAY` environment variable sets the incremental delay between retries for the POST request to the Falco pod (with k8s-audit plugin) pod.
+
+#### Rate limiter events per seconds
+
+The `RATELIMITEREVENTSPERSECONDS` environment variable sets the rate limiter for the number of events per second.
+
+#### Rate limiter burst
+
+The `RATELIMITERBURST` environment variable sets the rate limiter for the burst.
+
+#### Log level
+
+The `LOGLEVEL` environment variable sets what is sent to its log. The following log levels are allowed (from highest to lowest): `panic`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`.
+
+#### Keep alive
+
+The `KEEPALIVE` environment variable sets whether the connection to the webhook URL should be kept alive or not.
 
 ### Running
 

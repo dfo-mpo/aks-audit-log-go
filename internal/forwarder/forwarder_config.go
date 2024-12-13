@@ -19,6 +19,7 @@ type ForwarderConfiguration struct {
 	PostRetryIncrementalDelay int
 	RateLimiter               float64
 	RateLimiterBurst          int
+	KeepAlive                 bool
 }
 
 func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
@@ -81,6 +82,14 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 		f.RateLimiterBurst = rateLimiterBurst
 	}
 
+	keepAliveENV := os.Getenv("KEEPALIVE")
+	keepAlive, err := strconv.ParseBool(keepAliveENV)
+	if !keepAlive || err != nil {
+		f.KeepAlive = false
+	} else {
+		f.KeepAlive = true
+	}
+
 	log.Info().Msgf("EventHubName: %s", f.EventHubName)
 
 	log.Info().Msgf("BlobContainerName: %s", f.BlobContainerName)
@@ -94,6 +103,8 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 	log.Info().Msgf("RateLimiter: %v", f.RateLimiter)
 
 	log.Info().Msgf("RateLimiterBurst: %d", f.RateLimiterBurst)
+
+	log.Info().Msgf("KeepAlive: %v", f.KeepAlive)
 
 	return f
 }
