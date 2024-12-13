@@ -103,7 +103,7 @@ func (f *ForwarderConfiguration) InitConfig() *ForwarderConfiguration {
 	log.Info().Msgf("RateLimiter: %v", f.RateLimiter)
 
 	log.Info().Msgf("RateLimiterBurst: %d", f.RateLimiterBurst)
-	
+
 	log.Info().Msgf("KeepAlive: %v", f.KeepAlive)
 
 	return f

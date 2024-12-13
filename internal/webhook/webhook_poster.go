@@ -26,7 +26,7 @@ func (w *WebhookPoster) PostSyncNoException(url string, contentType string, body
 	}
 
 	if !keepAlive {
-		response.Body.Close()
+		defer response.Body.Close()
 	}
 
 	return response, nil

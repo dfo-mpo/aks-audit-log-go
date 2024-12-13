@@ -12,7 +12,7 @@ type HttpClientHandler struct {
 func NewHttpClientHandler(keepAlive bool) *HttpClientHandler {
 	t := http.DefaultTransport.(*http.Transport).Clone()
 	t.DisableKeepAlives = !keepAlive
-	
+
 	return &HttpClientHandler{
 		client: &http.Client{Transport: t},
 	}
