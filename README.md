@@ -32,11 +32,11 @@ This package sends the http POST request to the Falco pod (with k8s-audit plugin
 
 There is a `.envrc.example` file that contains the environment variables to be configured. You can save a copy as `.envrc` and then source it using `source .envrc` to load the environment variables into your shell session.
 
-**Note:** `POSTMAXRETRIES`, `POSTRETRYINCREMENTALDELAY` and `LOGLEVEL` are optional variables. They will default to 5 for `POSTMAXRETRIES`, 1000 for `POSTRETRYINCREMENTALDELAY` and "info" for `LOGLEVEL`.
+**Note:** `POSTMAXRETRIES`, `POSTRETRYINCREMENTALDELAY`, `LOGLEVEL` and `KEEPALIVE` are optional variables. They will default to 5 for `POSTMAXRETRIES`, 1000 for `POSTRETRYINCREMENTALDELAY`, "info" for `LOGLEVEL` and false for `KEEPALIVE`.
 
 ### Log level
 
-The `LOGLEVEL` environment variable sets what is sent to its log. The following log levels are allowed (from higest to lowest): `panic`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`.
+The `LOGLEVEL` environment variable sets what is sent to its log. The following log levels are allowed (from highest to lowest): `panic`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`.
 
 ### Running
 
