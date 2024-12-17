@@ -102,12 +102,9 @@ stages:
       - Lint
     jobs:
       - job: BuildImage
-        displayName: Build Image
+        displayName: Build & Push Image
         steps:
           - template: pipelines/tasks/image-buildkit-local-build.yaml@templates
-      - job: PushImage
-        displayName: Push Image
-        steps:
           - template: pipelines/tasks/skopeo-login-registry.yaml@templates
             parameters:
               username: $(aps-acr-username)
