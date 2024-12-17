@@ -105,8 +105,8 @@ stages:
         displayName: Build Image
         steps:
           - template: pipelines/tasks/image-buildkit-local-build.yaml@templates
-      - job: BuildImage
-        displayName: Build & Push Image
+      - job: PushImage
+        displayName: Push Image
         steps:
           - template: pipelines/tasks/skopeo-login-registry.yaml@templates
             parameters:
