@@ -17,10 +17,14 @@ resources:
 
 variables:
   - group: global
-  - name: full-image
+  - name: full-image-aps
     value: apscommonacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
-  - name: registry-repo
+  - name: registry-repo-aps
     value: apscommonacr.azurecr.io
+  - name: full-image-iwls
+    value: iwlsacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
+  - name: registry-repo-iwls
+    value: iwlsacr.azurecr.io
 
 stages:
   - stage: UnitTest
@@ -105,7 +109,15 @@ stages:
             parameters:
               username: $(aps-acr-username)
               password: $(aps-acr-password)
-              repo: $(registry-repo)
+              repo: $(registry-repo-aps)
           - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
             parameters:
-              fullImage: $(full-image)
+              fullImage: $(full-image-aps)
+          - template: pipelines/tasks/skopeo-login-registry.yaml@templates
+            parameters:
+              username: $(iwls-acr-username)
+              password: $(iwls-acr-password)
+              repo: $(registry-repo-iwls)
+          - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
+            parameters:
+              fullImage: $(full-image-iwls)
