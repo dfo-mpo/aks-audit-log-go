@@ -18,7 +18,7 @@ pr:
 variables:
   - group: global
   - name: registry-repo
-    value: apscommonacr.azurecr.io
+    value: coastcommonacr.azurecr.io
 
 stages:
   - stage: UnitTest
@@ -97,6 +97,6 @@ stages:
     jobs:
       - template: pipelines/jobs/image-buildkit-local-push.yaml@templates
         parameters:
-          registryUsername: $(aps-acr-username)
-          registryPassword: $(aps-acr-password)
+          registryUsername: $(coast-acr-username)
+          registryPassword: $(coast-acr-password)
           registryRepo: $(registry-repo)

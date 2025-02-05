@@ -17,10 +17,10 @@ resources:
 
 variables:
   - group: global
-  - name: full-image-aps
-    value: apscommonacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
-  - name: registry-repo-aps
-    value: apscommonacr.azurecr.io
+  - name: full-image-coast
+    value: coastcommonacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
+  - name: registry-repo-coast
+    value: coastcommonacr.azurecr.io
   - name: full-image-iwls
     value: iwlsacr.azurecr.io/aks/aks-audit-log-go:$(Build.BuildNumber)
   - name: registry-repo-iwls
@@ -107,12 +107,12 @@ stages:
           - template: pipelines/tasks/image-buildkit-local-build.yaml@templates
           - template: pipelines/tasks/skopeo-login-registry.yaml@templates
             parameters:
-              username: $(aps-acr-username)
-              password: $(aps-acr-password)
-              repo: $(registry-repo-aps)
+              username: $(coast-acr-username)
+              password: $(coast-acr-password)
+              repo: $(registry-repo-coast)
           - template: pipelines/tasks/skopeo-push-local-image.yaml@templates
             parameters:
-              fullImage: $(full-image-aps)
+              fullImage: $(full-image-coast)
           - template: pipelines/tasks/skopeo-login-registry.yaml@templates
             parameters:
               username: $(iwls-acr-username)
