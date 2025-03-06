@@ -1,6 +1,7 @@
 module github.com/dfo-mpo/aks-audit-log-go
 
 go 1.22.4
+toolchain go1.23.7
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs v1.2.3
@@ -8,7 +9,7 @@ require (
 	github.com/prometheus/client_golang v1.20.5
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/time v0.8.0
+	golang.org/x/time v0.11.0
 )
 
 require (
